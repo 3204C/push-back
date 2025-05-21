@@ -54,6 +54,7 @@ void opcontrol(void);
 #endif
 
 #ifdef __cplusplus
+#include "config.hpp"
 #endif
 
 #endif  // _PROS_MAIN_H_
