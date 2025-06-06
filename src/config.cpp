@@ -1,24 +1,28 @@
+/**
+ * @file config.cpp
+ * 
+ * This file defines all variables declared in "config.hpp". These variables
+ * define the controller, drivetrain motors, intake motor, GPS Sensor and the
+ * AI Vision Sensor.
+ */
+
+
 #include "main.h"
 
-// The main controller used for the robot.
+
 pros::Controller controller(CONTROLLER_MASTER);
 
-// The motors on the left side of the drivetrain.
 // TODO: Change port number placeholders
-pros::MotorGroup drivetrain_left({1, 2});
+pros::MotorGroup drivetrain_left({1, 2, 3});
 
-// The motors on the right side of the drivetrain.
 // TODO: Change port number placeholders
-pros::MotorGroup drivetrain_right({3, 4});
+pros::MotorGroup drivetrain_right({4, 5, 6});
 
-// The intake motor.
 // TODO: Change port number placeholder
-pros::Motor intake(5);
+pros::Motor intake(7);
 
-// The GPS Sensor.
 // TODO: Change port number and offset placeholders
-pros::Gps gps(6, 0.0, 0.0);
+pros::Gps gps(8, 0.0, 0.0);
 
-// The AI Vision Sensor.
 // TODO: Change port number placeholder
-pros::Vision vision(7);
+pros::Vision vision(9);
