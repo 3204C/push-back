@@ -1,13 +1,26 @@
+// TODO: Add file description
 /**
  * @file main.cpp
  * 
  * [description]
  */
-// TODO: Add file description
 
 
 #include "main.h"
 #include "drivetrain.hpp"
+
+
+void debug()
+{
+    while (true)
+    {
+        pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps.get_position_x()));
+        pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps.get_position_y()));
+        pros::lcd::set_text(7, std::format("Heading: {:.2f}", gps.get_heading()));
+
+        pros::delay(100);
+    }
+}
 
 
 void initialize()
@@ -25,6 +38,9 @@ void initialize()
 	drivetrain_right.set_brake_mode_all(MOTOR_BRAKE_BRAKE);
 	drivetrain_right.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
 	drivetrain_right.tare_position_all();
+
+    // Create a task to run the debugger.
+    pros::Task debugger(debug);
 }
 
 
