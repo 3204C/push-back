@@ -12,17 +12,15 @@
 
 pros::Controller controller(CONTROLLER_MASTER);
 
-// TODO: Change port number placeholders
-pros::MotorGroup drivetrain_left({1, 2, 3});
+pros::MotorGroup drivetrain_left({20, 19, 18});
 
-// TODO: Change port number placeholders
-pros::MotorGroup drivetrain_right({4, 5, 6});
+pros::MotorGroup drivetrain_right({-11, -12, -13});
 
 // TODO: Change port number placeholder
-pros::Motor intake(7);
+pros::Motor intake(1);
 
 // TODO: Change port number and offset placeholders
-pros::Gps gps(8, 0.0, 0.0);
+pros::Gps gps(2, 0.0, 0.0);
 
 // TODO: Change port number placeholder
-pros::Vision vision(9);
+pros::Vision vision(3);
