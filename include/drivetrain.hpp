@@ -18,7 +18,7 @@
  * @param voltage_right The voltage of each motor on the right side of the drivetrain.
  * @param deadzone The minimum voltage required to spin the motors.
  */
-void drivetrain_driver_control(int voltage_left, int voltage_right, double deadzone = 4.0);
+void drivetrain_driver_control(int voltage_left, int voltage_right, double deadzone);
 
 
 #endif

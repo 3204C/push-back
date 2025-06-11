@@ -12,7 +12,7 @@
 #include "drivetrain.hpp"
 
 
-void drivetrain_driver_control(int voltage_left, int voltage_right, double deadzone = 4.0)
+void drivetrain_driver_control(int voltage_left, int voltage_right, double deadzone)
 {
     // Left side motors are controlled with the left joystick.
     // Only spin the motors when the left stick is past the deadzone.

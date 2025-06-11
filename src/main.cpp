@@ -63,8 +63,8 @@ void opcontrol()
     // Repeat until driver control is over.
 	while (true)
 	{
-        // Control the drivetrain using voltage from the joysticks.
-		drivetrain_driver_control(controller.get_analog(ANALOG_LEFT_Y), controller.get_analog(ANALOG_RIGHT_Y));
+        // Control the drivetrain using voltage from the joysticks with a deadzone of 4.0 V.
+		drivetrain_driver_control(controller.get_analog(ANALOG_LEFT_Y), controller.get_analog(ANALOG_RIGHT_Y), 4.0);
 
 		pros::delay(20);
 	}
