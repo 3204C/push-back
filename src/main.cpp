@@ -2,13 +2,12 @@
 /**
  * @file main.cpp
  * 
- * [description]
+ * This is the main program of the robot. All 
  */
-
 
 #include "main.h"
 #include "drivetrain.hpp"
-
+#include "intake.hpp"
 
 void debug()
 {
@@ -22,7 +21,6 @@ void debug()
     }
 }
 
-
 void initialize()
 {
     // Initialise the Brain screen.
@@ -31,7 +29,7 @@ void initialize()
 	pros::lcd::set_text(0, "Program start");
 
     // Set the drivetrain motors' brake mode and encoder units, then reset their
-    // position to 0 deg.
+    // position to 0 degrees.
 	drivetrain_left.set_brake_mode_all(MOTOR_BRAKE_BRAKE);
 	drivetrain_left.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
 	drivetrain_left.tare_position_all();
@@ -39,22 +37,24 @@ void initialize()
 	drivetrain_right.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
 	drivetrain_right.tare_position_all();
 
-    // Create a task to run the debugger.
+    // Set the intake motor's brake mode and encoder units, then reset its
+    // position to 0 degrees.
+    intake.set_brake_mode(MOTOR_BRAKE_BRAKE);
+	intake.set_encoder_units(MOTOR_ENCODER_DEGREES);
+	intake.tare_position();
+
+    // Create a task to run the debugger asynchronously.
     pros::Task debugger(debug);
 }
 
-
 void disabled() {}
 
-
 void competition_initialize() {}
-
 
 void autonomous()
 {
     pros::lcd::set_text(1, "Autonomous start");
 }
-
 
 void opcontrol()
 {
@@ -63,8 +63,17 @@ void opcontrol()
     // Repeat until driver control is over.
 	while (true)
 	{
-        // Control the drivetrain using voltage from the joysticks with a deadzone of 4.0 V.
-		drivetrain_driver_control(controller.get_analog(ANALOG_LEFT_Y), controller.get_analog(ANALOG_RIGHT_Y), 4.0);
+        // Control the drivetrain using voltage from the joysticks with a mininum
+        // voltage of 4 V. The left joystick controls the left side, and the right
+        // joystick controls the right side.
+		drivetrain_driver_control(controller.get_analog(ANALOG_LEFT_Y),
+            controller.get_analog(ANALOG_RIGHT_Y), 4);
+
+        // Spin the intake using the controller. Pressing R1 spins the intake inwards,
+        // and pressing R2 spins the intake outwards. Pressing both or neither will not
+        // make the intake spin.
+        intake_spin(controller.get_digital(DIGITAL_R1),
+            controller.get_digital(DIGITAL_R2));
 
 		pros::delay(20);
 	}
