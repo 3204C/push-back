@@ -12,10 +12,10 @@
 extern pros::Controller controller;
 
 /// The motors on the left side of the drivetrain.
-extern pros::MotorGroup drivetrain_left;
+extern pros::MotorGroup dt_left;
 
 /// The motors on the right side of the drivetrain.
-extern pros::MotorGroup drivetrain_right;
+extern pros::MotorGroup dt_right;
 
 /// The intake motors.
 extern pros::MotorGroup intake;

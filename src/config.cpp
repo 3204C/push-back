@@ -10,9 +10,9 @@
 
 pros::Controller controller(CONTROLLER_MASTER);
 
-pros::MotorGroup drivetrain_left({1, -2, 3});
+pros::MotorGroup dt_left({1, -2, 3});
 
-pros::MotorGroup drivetrain_right({-20, 9, -8});
+pros::MotorGroup dt_right({-20, 9, -8});
 
 pros::MotorGroup intake({5, -6});
 

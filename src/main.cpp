@@ -13,9 +13,13 @@ void debug()
 {
     while (true)
     {
-        pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps.get_position_x()));
-        pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps.get_position_y()));
-        pros::lcd::set_text(7, std::format("Heading: {:.2f}", gps.get_heading()));
+        // pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps.get_position_x()));
+        // pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps.get_position_y()));
+        // pros::lcd::set_text(7, std::format("Heading: {:.2f}", gps.get_heading()));
+
+        pros::lcd::set_text(5, std::format("X-position: {:.2f}", 0.0));
+        pros::lcd::set_text(6, std::format("Y-position: {:.2f}", 0.0));
+        pros::lcd::set_text(7, std::format("Heading: {:.2f}", 0.0));
 
         pros::delay(100);
     }
@@ -30,12 +34,12 @@ void initialize()
 
     // Set the drivetrain motors' brake mode and encoder units, then reset their
     // position to 0 degrees.
-	drivetrain_left.set_brake_mode_all(MOTOR_BRAKE_BRAKE);
-	drivetrain_left.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
-	drivetrain_left.tare_position_all();
-	drivetrain_right.set_brake_mode_all(MOTOR_BRAKE_BRAKE);
-	drivetrain_right.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
-	drivetrain_right.tare_position_all();
+	dt_left.set_brake_mode_all(MOTOR_BRAKE_BRAKE);
+	dt_left.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
+	dt_left.tare_position_all();
+	dt_right.set_brake_mode_all(MOTOR_BRAKE_BRAKE);
+	dt_right.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
+	dt_right.tare_position_all();
 
     // Set the intake motor's brake mode and encoder units, then reset its
     // position to 0 degrees.

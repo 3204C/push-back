@@ -35,26 +35,26 @@ void dt_move(int left_voltage, int right_voltage, int min_voltage)
          * 0 <= (V - min) / (127 - min) <= 1            (divide by 127 - 4)
          * 0 <= 127 * (V - min) / (127 - min) <= 127    (multiply by 127)
          */
-        drivetrain_left.move((left_voltage - min_voltage) * MAX_DT_VOLTAGE / 
+        dt_left.move((left_voltage - min_voltage) * MAX_DT_VOLTAGE / 
             (MAX_DT_VOLTAGE - min_voltage));
     }
     else
     {
         // Stop the motors when the input voltage is below the minimum.
-        drivetrain_left.brake();
+        dt_left.brake();
     }
 
     // Spin the right side motors when the size of the right side's voltage is
     // greater than the minimum required voltage.
     if (abs(right_voltage) > min_voltage)
     {
-        drivetrain_right.move((right_voltage - min_voltage) * MAX_DT_VOLTAGE / 
+        dt_right.move((right_voltage - min_voltage) * MAX_DT_VOLTAGE / 
             (MAX_DT_VOLTAGE - min_voltage));
     }
     else
     {
         // Stop the motors when the input voltage is below the minimum.
-        drivetrain_right.brake();
+        dt_right.brake();
     }
 }
 
@@ -65,8 +65,8 @@ void dt_move(int left_voltage, int right_voltage, int min_voltage, int duration)
     
     // The drivetrain will stop after the set duration has passed.
     pros::delay(duration);
-    drivetrain_left.brake();
-    drivetrain_right.brake();
+    dt_left.brake();
+    dt_right.brake();
 }
 
 void dt_move_straight(double distance, int duration)
@@ -82,13 +82,13 @@ void dt_move_straight(double distance, int duration)
     double angular_velocity = velocity / WHEEL_RADIUS;
 
     // Spin the motors with the calculated angular velocity.
-    drivetrain_left.move_velocity(angular_velocity);
-    drivetrain_right.move_velocity(angular_velocity);
+    dt_left.move_velocity(angular_velocity);
+    dt_right.move_velocity(angular_velocity);
 
     // The drivetrain will stop after the set duration has passed.
     pros::delay(duration);
-    drivetrain_left.brake();
-    drivetrain_right.brake();
+    dt_left.brake();
+    dt_right.brake();
 }
 
 void dt_turn(double angle, int duration)
@@ -110,17 +110,17 @@ void dt_turn(double angle, int duration)
     // Determine the direction of rotation, then spin the motors as desired.
     if (angle > 0)
     {
-        drivetrain_left.move_velocity(angular_velocity);
-        drivetrain_right.move_velocity(-angular_velocity);
+        dt_left.move_velocity(angular_velocity);
+        dt_right.move_velocity(-angular_velocity);
     }
     else if (angle < 0)
     {
-        drivetrain_left.move_velocity(-angular_velocity);
-        drivetrain_right.move_velocity(angular_velocity);
+        dt_left.move_velocity(-angular_velocity);
+        dt_right.move_velocity(angular_velocity);
     }
     
     // The drivetrain will stop after the set duration has passed.
     pros::delay(duration);
-    drivetrain_left.brake();
-    drivetrain_right.brake();
+    dt_left.brake();
+    dt_right.brake();
 }
