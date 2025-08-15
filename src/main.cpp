@@ -2,7 +2,7 @@
 /**
  * @file main.cpp
  * 
- * This is the main program of the robot. All 
+ * This is the entry point of the robot.
  */
 
 #include "main.h"
@@ -39,9 +39,9 @@ void initialize()
 
     // Set the intake motor's brake mode and encoder units, then reset its
     // position to 0 degrees.
-    intake.set_brake_mode(MOTOR_BRAKE_BRAKE);
-	intake.set_encoder_units(MOTOR_ENCODER_DEGREES);
-	intake.tare_position();
+    intake.set_brake_mode_all(MOTOR_BRAKE_HOLD);
+	intake.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
+	intake.tare_position_all();
 
     // Create a task to run the debugger asynchronously.
     pros::Task debugger(debug);
@@ -54,6 +54,8 @@ void competition_initialize() {}
 void autonomous()
 {
     pros::lcd::set_text(1, "Autonomous start");
+
+    dt_move_straight(2.0, 1000);
 }
 
 void opcontrol()
@@ -66,7 +68,7 @@ void opcontrol()
         // Control the drivetrain using voltage from the joysticks with a mininum
         // voltage of 4 V. The left joystick controls the left side, and the right
         // joystick controls the right side.
-		drivetrain_driver_control(controller.get_analog(ANALOG_LEFT_Y),
+		dt_move(controller.get_analog(ANALOG_LEFT_Y),
             controller.get_analog(ANALOG_RIGHT_Y), 4);
 
         // Spin the intake using the controller. Pressing R1 spins the intake inwards,
