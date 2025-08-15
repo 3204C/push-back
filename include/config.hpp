@@ -21,12 +21,12 @@ extern pros::MotorGroup drivetrain_right;
 extern pros::MotorGroup intake;
 
 /// The conveyor belt motor.
-extern pros::Motor conveyor;
+// extern pros::Motor conveyor;
 
 /// The GPS Sensor.
-extern pros::Gps gps;
+// extern pros::Gps gps;
 
 /// The AI Vision Sensor.
-extern pros::Vision vision;
+// extern pros::Vision vision;
 
 #endif
