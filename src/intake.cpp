@@ -12,10 +12,10 @@
 // The voltage of the intake motor when spinning.
 #define INTAKE_VOLTAGE 127
 
-void intake_spin(int is_intake_pressed, int is_outtake_pressed)
+void intake_spin(int is_inward, int is_outward)
 {   
     // Calculate the net direction.
-    int direction = is_intake_pressed - is_outtake_pressed;
+    int direction = is_inward - is_outward;
 
     // If no direction is given, nothing happens.
     if (direction == 0)
@@ -23,7 +23,7 @@ void intake_spin(int is_intake_pressed, int is_outtake_pressed)
         intake.brake();
     }
 
-    // The intake spins inwards if the direction is positive and spins outwards
+    // The intake spins inward if the direction is positive and spins outward
     // if the direction is negative.
     else
     {
@@ -31,9 +31,10 @@ void intake_spin(int is_intake_pressed, int is_outtake_pressed)
     }
 }
 
-void intake_spin(int is_intake_pressed, int is_outtake_pressed, int duration)
+void intake_spin(int is_inward, int is_outward, int duration)
 {   
-    intake_spin(is_intake_pressed, is_outtake_pressed);
+    // Spin the intake according to the direction given.
+    intake_spin(is_inward, is_outward);
 
     // The intake will stop after the set duration has passed.
     pros::delay(duration);

@@ -11,18 +11,18 @@
 /**
  * Spins the intake motor in a specified direction indefinitely.
  * 
- * @param is_intake_pressed Returns 1 if the intake button is pressed and 0 if not.
- * @param is_outtake_pressed Returns 1 if the outtake button is pressed and 0 if not.
+ * @param is_inward Returns 1 if the inward button is pressed and 0 if not.
+ * @param is_outward Returns 1 if the outwards button is pressed and 0 if not.
  */
-void intake_spin(int is_intake_pressed, int is_outtake_pressed);
+void intake_spin(int is_inward, int is_outward);
 
 /**
  * Spins the intake motor in a specified direction for an amount of time.
  * 
- * @param is_intake_pressed Returns 1 if the intake button is pressed and 0 if not.
- * @param is_outtake_pressed Returns 1 if the outtake button is pressed and 0 if not.
+ * @param is_inward Returns 1 if the inward button is pressed and 0 if not.
+ * @param is_outward Returns 1 if the outward button is pressed and 0 if not.
  * @param duration The amount of time (in ms) the intake motor spins for.
  */
-void intake_spin(int is_intake_pressed, int is_outtake_pressed, int duration);
+void intake_spin(int is_inward, int is_outward, int duration);
 
 #endif
