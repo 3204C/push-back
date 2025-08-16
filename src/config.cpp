@@ -12,12 +12,12 @@ pros::Controller controller(CONTROLLER_MASTER);
 
 pros::MotorGroup dt_left({1, -2, 3});
 
-pros::MotorGroup dt_right({-20, 9, -8});
+pros::MotorGroup dt_right({-10, 9, -8});
 
-pros::MotorGroup intake({5, -6});
+pros::MotorGroup intake({4, -6});
 
-// TODO: Change port number placeholder
-// pros::Motor conveyor(17);
+// TODO: Change port number placeholders
+pros::MotorGroup conveyor({16, -17});
 
 // TODO: Change port number and offset placeholders
 // pros::Gps gps(18, 0.0, 0.0);

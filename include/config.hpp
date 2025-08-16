@@ -21,7 +21,7 @@ extern pros::MotorGroup dt_right;
 extern pros::MotorGroup intake;
 
 /// The conveyor belt motor.
-// extern pros::Motor conveyor;
+extern pros::Motor conveyor;
 
 /// The GPS Sensor.
 // extern pros::Gps gps;
