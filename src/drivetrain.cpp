@@ -20,7 +20,55 @@
 /// The distance between the two wheels on each side.
 #define TRACK_WIDTH 15
 
-void dt_move(int left_voltage, int right_voltage, int min_voltage)
+double distance_to_point(double x, double y)
+{
+    // Calculate the x and y component distances.
+    double delta_x = x - gps.get_position_x();
+    double delta_y = y - gps.get_position_y();
+
+    // Calculate the absolute distance using the Pythagorean theorem.
+    double distance = std::sqrt(delta_x * delta_x + delta_y + delta_y);
+
+    // Convert the distance from metres to inches.
+    distance *= 39.37;
+
+    return distance;
+}
+
+double heading_from_robot(double x, double y)
+{
+    // Calculate the x and y component distances.
+    double delta_x = x - gps.get_position_x();
+    double delta_y = y - gps.get_position_y();
+
+    // Calculate the angle using the arctangent function.
+    double heading = std::atan2(delta_y, delta_x);
+
+    // Convert the angle from radians to degrees.
+    heading *= 180 / 3.141592;
+
+    // If the angle is negative, add 360 degrees to turn it positive.
+    if (heading < 0) { heading += 360; }
+
+    // Turn the angle into a heading.
+    heading = 90 - heading;
+
+    return heading;
+}
+
+double angle_from_robot(double x, double y)
+{
+    double heading = heading_from_robot(x, y);
+
+    // Calculate the two possible angles the robot can turn to face the point.
+    double angle_1 = heading - gps.get_heading();
+    double angle_2 = 360 - angle_1;
+
+    // Return the smaller angle between the two.
+    return std::max(angle_1, angle_2);
+}
+
+void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage)
 {
     // Spin the left side motors when the size of the left side's voltage is
     // greater than the minimum required voltage.
@@ -58,33 +106,11 @@ void dt_move(int left_voltage, int right_voltage, int min_voltage)
     }
 }
 
-void dt_move(int left_voltage, int right_voltage, int min_voltage, int duration)
+void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage, int duration)
 {
     // Spin the motors with the specified values.
-    dt_move(left_voltage, right_voltage, min_voltage);
+    dt_move_voltage(left_voltage, right_voltage, min_voltage);
     
-    // The drivetrain will stop after the set duration has passed.
-    pros::delay(duration);
-    dt_left.brake();
-    dt_right.brake();
-}
-
-void dt_move_straight(double distance, int duration)
-{
-    /**
-     * Calculate the angular velocity of each motor using the formulas below:
-     * 
-     * v (in/min) = d (in) / t (ms) * 60000 (ms/min)    (velocity of wheel)
-     * v (in/min) = r (in) * omega (rot/min)
-     * omega (rot/min) = v (in/min) / r (in)            (angular velocity of motor)
-     */
-    double velocity = distance / duration * 60000;
-    double angular_velocity = velocity / WHEEL_RADIUS;
-
-    // Spin the motors with the calculated angular velocity.
-    dt_left.move_velocity(angular_velocity);
-    dt_right.move_velocity(angular_velocity);
-
     // The drivetrain will stop after the set duration has passed.
     pros::delay(duration);
     dt_left.brake();
@@ -123,4 +149,50 @@ void dt_turn(double angle, int duration)
     pros::delay(duration);
     dt_left.brake();
     dt_right.brake();
+}
+
+void dt_turn(double x, double y, int duration)
+{
+    // Calculate the smallest angle that the robot can turn to face the point.
+    double angle = angle_from_robot(x, y);
+
+    // Turn towards the point.
+    dt_turn(angle, duration);
+}
+
+void dt_move_straight(double distance, int duration)
+{
+    /**
+     * Calculate the angular velocity of each motor using the formulas below:
+     * 
+     * v (in/min) = d (in) / t (ms) * 60000 (ms/min)    (velocity of wheel)
+     * v (in/min) = r (in) * omega (rot/min)
+     * omega (rot/min) = v (in/min) / r (in)            (angular velocity of motor)
+     */
+    double velocity = distance / duration * 60000;
+    double angular_velocity = velocity / WHEEL_RADIUS;
+
+    // Spin the motors with the calculated angular velocity.
+    dt_left.move_velocity(angular_velocity);
+    dt_right.move_velocity(angular_velocity);
+
+    // The drivetrain will stop after the set duration has passed.
+    pros::delay(duration);
+    dt_left.brake();
+    dt_right.brake();
+}
+
+void dt_move_straight(double x, double y, int turn_duration, int move_duration, double end_distance)
+{   
+    // Calculate the distance between the robot and the given point.
+    double distance = distance_to_point(x, y);
+
+    // Reduce the travel distance so the robot stops at a given end distance.
+    distance -= end_distance;
+
+    // Turn towards the point.
+    dt_turn(x, y, turn_duration);
+
+    // Move towards the point.
+    dt_move_straight(distance, move_duration);
 }

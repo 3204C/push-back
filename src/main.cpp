@@ -8,19 +8,15 @@
 #include "main.h"
 #include "drivetrain.hpp"
 #include "intake.hpp"
-#include "conveyor.hpp"
+// #include "conveyor.hpp"
 
 void debug()
 {
     while (true)
     {
-        // pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps.get_position_x()));
-        // pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps.get_position_y()));
-        // pros::lcd::set_text(7, std::format("Heading: {:.2f}", gps.get_heading()));
-
-        pros::lcd::set_text(5, std::format("X-position: {:.2f}", 0.0));
-        pros::lcd::set_text(6, std::format("Y-position: {:.2f}", 0.0));
-        pros::lcd::set_text(7, std::format("Heading: {:.2f}", 0.0));
+        pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps.get_position_x()));
+        pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps.get_position_y()));
+        pros::lcd::set_text(7, std::format("Heading: {:.2f}", gps.get_heading()));
 
         pros::delay(100);
     }
@@ -50,9 +46,9 @@ void initialize()
 
     // Set the conveyor belt motors' brake mode and encoder units, then reset their
     // positions to 0 degrees.
-    conveyor.set_brake_mode_all(MOTOR_BRAKE_HOLD);
-	conveyor.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
-	conveyor.tare_position_all();
+    // conveyor.set_brake_mode_all(MOTOR_BRAKE_HOLD);
+	// conveyor.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
+	// conveyor.tare_position_all();
 
     // Create a task to run the debugger asynchronously.
     // pros::Task debugger(debug);
@@ -79,7 +75,7 @@ void opcontrol()
         // Control the drivetrain using voltage from the joysticks with a mininum
         // voltage of 4 V. The left joystick controls the left side, and the right
         // joystick controls the right side.
-		dt_move(controller.get_analog(ANALOG_LEFT_Y),
+		dt_move_voltage(controller.get_analog(ANALOG_LEFT_Y),
             controller.get_analog(ANALOG_RIGHT_Y), 4);
 
         // Spin the intake using the controller. Pressing R1 spins the intake inward,
@@ -91,8 +87,8 @@ void opcontrol()
         // Spin the conveyor belt using the controller. Pressing L1 spins the conveyor
         // belt upward, and pressing L2 spins the conveyor belt downward. Pressing both
         // or neither will not make the conveyor belt spin.
-        conveyor_spin(controller.get_digital(DIGITAL_L1),
-            controller.get_digital(DIGITAL_L2));
+        // conveyor_spin(controller.get_digital(DIGITAL_L1),
+        //     controller.get_digital(DIGITAL_L2));
 
 		pros::delay(20);
 	}
