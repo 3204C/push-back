@@ -20,7 +20,10 @@ pros::MotorGroup intake({4, -6});
 pros::MotorGroup conveyor({16, -17});
 
 // TODO: Change port number and offset placeholders
-// pros::Gps gps(18, 0.0, 0.0);
+pros::Gps gps(18, 0.0, 0.0);
 
 // TODO: Change port number placeholder
-// pros::Vision vision(19);
+// pros::Optical optical(19);
+
+// TODO: Change port number placeholder
+// pros::Vision vision(20);
