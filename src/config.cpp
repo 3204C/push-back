@@ -10,11 +10,11 @@
 
 pros::Controller controller(CONTROLLER_MASTER);
 
-pros::MotorGroup dt_left({1, -2, 3});
+pros::MotorGroup dt_left({3, -2, 1});
 
-pros::MotorGroup dt_right({-10, 9, -8});
+pros::MotorGroup dt_right({-6, 5, -4});
 
-pros::MotorGroup intake({4, -6});
+pros::MotorGroup intake({10, -21});
 
 // TODO: Change port number placeholders
 pros::MotorGroup conveyor({16, -17});
