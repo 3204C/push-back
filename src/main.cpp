@@ -6,6 +6,7 @@
  */
 
 #include "main.h"
+#include "autonomous.hpp"
 #include "drivetrain.hpp"
 #include "intake.hpp"
 // #include "conveyor.hpp"
@@ -52,6 +53,13 @@ void initialize()
 
     // Create a task to run the debugger asynchronously.
     // pros::Task debugger(debug);
+
+    auton_routine = 0;
+
+    pros::lcd::set_text(1, "Autonomous routine selected: none");
+    pros::lcd::register_btn0_cb(auton_select_left);
+    pros::lcd::register_btn1_cb(auton_select_none);
+    pros::lcd::register_btn2_cb(auton_select_right);
 }
 
 void disabled() {}
@@ -60,14 +68,56 @@ void competition_initialize() {}
 
 void autonomous()
 {
-    pros::lcd::set_text(1, "Autonomous start");
+    pros::lcd::set_text(2, "Autonomous start");
 
-    dt_move_straight(2.0, 1000);
+    auton_routine = 0;
+
+    // Left side autonomous routine
+    if (auton_routine == 1)
+    {
+        // Spin the intake inwards to pick up blocks.
+        intake_spin(1, 0);
+
+        // Move towards the centre blocks.
+        dt_move_straight(44.0, 2000);
+
+        // Stop the intake.
+        intake_spin(0, 0);
+
+        // Turn towards the centre goal.
+        dt_turn(45.0, 1000);
+
+        // Move towards the centre goal.
+        dt_move_straight(9.0, 1000);
+
+        intake_spin(0, 1, 1500);
+    }
+
+    // Right side autonomous routine
+    else if (auton_routine == 2)
+    {
+        // Spin the intake inwards to pick up blocks.
+        intake_spin(1, 0);
+
+        // Move towards the centre blocks.
+        dt_move_straight(44.0, 1500);
+
+        // Stop the intake.
+        intake_spin(0, 0);
+
+        // Turn towards the centre goal.
+        dt_turn(-45.0, 1000);
+
+        // Move towards the centre goal.
+        dt_move_straight(9.0, 1000);
+
+        intake_spin(0, 1, 1500);
+    }
 }
 
 void opcontrol()
 {
-    pros::lcd::set_text(2, "Driver control start");
+    pros::lcd::set_text(3, "Driver control start");
 
     // Repeat until driver control is over.
 	while (true)
