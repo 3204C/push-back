@@ -17,8 +17,29 @@
 /// The radius of each drivetrain wheel (in inches).
 #define WHEEL_RADIUS 2
 
-/// The distance between the two wheels on each side.
+/// The distance between the two wheels on each side (in inches).
 #define TRACK_WIDTH 15
+
+/// The distance between the two end wheels on the same side (in inches).
+#define WHEELBASE 10
+
+/// Pi to 7 significant figures.
+#define PI 3.141593
+
+double degrees_to_radians(double angle)
+{
+    return angle / 180 * PI;
+}
+
+double radians_to_degrees(double angle)
+{
+    return angle * 180 / PI;
+}
+
+double radians_to_revolutions(double angle)
+{
+    return angle / (2 * PI);
+}
 
 double distance_to_point(double x, double y)
 {
@@ -45,7 +66,7 @@ double heading_from_robot(double x, double y)
     double heading = std::atan2(delta_y, delta_x);
 
     // Convert the angle from radians to degrees.
-    heading *= 180 / 3.141592;
+    heading = radians_to_degrees(heading);
 
     // If the angle is negative, add 360 degrees to turn it positive.
     if (heading < 0) { heading += 360; }
@@ -123,26 +144,37 @@ void dt_turn(double angle, int duration)
      * Calculate the angular velocity of each motor using the formulas below:
      * 
      * R (in) = 1/2 * sqrt([wheelbase]^2 + [track width]^2) (radius of turning circle)
-     * d (in) = R (in) * THETA (deg) / 360 (deg)            (displacement of wheel)
+     * d (in) = R (in) * THETA (rad)                        (displacement of wheel)
      * v (in/min) = d (in) / t (ms) * 60000 (ms/min)        (velocity of wheel)
-     * v (in/min) = r (in) * omega (rot/min)                
-     * omega (rot/min) = v (in/min) / r (in)                (angular velocity of motor)
+     * v (in/min) = r (in) * omega (rad/min)                
+     * omega (rad/min) = v (in/min) / r (in)                (angular velocity of motor)
+     * omega (rev/min) = omega (rad/min) / (2 * pi)         (convert to revolutions per min)
      */
-    double turning_radius = TRACK_WIDTH / 2;
-    double distance = turning_radius * abs(angle) / 360;
-    double velocity = distance / duration * 60000;
-    double angular_velocity = velocity / WHEEL_RADIUS;
+    
+    double radians = degrees_to_radians(angle);
+
+    double turning_radius_centre = TRACK_WIDTH / 2;
+    double distance_centre = turning_radius_centre * abs(radians);
+    double velocity_centre = distance_centre / duration * 60000;
+    double angular_velocity_centre = velocity_centre / WHEEL_RADIUS;
+    angular_velocity_centre = radians_to_revolutions(angular_velocity_centre);
+
+    double turning_radius_far = sqrt(WHEELBASE * WHEELBASE + TRACK_WIDTH * TRACK_WIDTH) / 2;
+    double distance_far = turning_radius_far * abs(radians);
+    double velocity_far = distance_far / duration * 60000;
+    double angular_velocity_far = velocity_far / WHEEL_RADIUS;
+    angular_velocity_far = radians_to_revolutions(angular_velocity_far);
 
     // Determine the direction of rotation, then spin the motors as desired.
     if (angle > 0)
     {
-        dt_left.move_velocity(angular_velocity);
-        dt_right.move_velocity(-angular_velocity);
+        dt_left.move_velocity(angular_velocity_centre);
+        dt_right.move_velocity(-angular_velocity_centre);
     }
     else if (angle < 0)
     {
-        dt_left.move_velocity(-angular_velocity);
-        dt_right.move_velocity(angular_velocity);
+        dt_left.move_velocity(-angular_velocity_centre);
+        dt_right.move_velocity(angular_velocity_centre);
     }
     
     // The drivetrain will stop after the set duration has passed.
@@ -166,11 +198,13 @@ void dt_move_straight(double distance, int duration)
      * Calculate the angular velocity of each motor using the formulas below:
      * 
      * v (in/min) = d (in) / t (ms) * 60000 (ms/min)    (velocity of wheel)
-     * v (in/min) = r (in) * omega (rot/min)
-     * omega (rot/min) = v (in/min) / r (in)            (angular velocity of motor)
+     * v (in/min) = r (in) * omega (rad/min)
+     * omega (rad/min) = v (in/min) / r (in)            (angular velocity of motor)
+     * omega (rev/min) = omega (rad/min) / (2 * pi)     (convert to revolutions per min)
      */
     double velocity = distance / duration * 60000;
     double angular_velocity = velocity / WHEEL_RADIUS;
+    angular_velocity = radians_to_revolutions(angular_velocity);
 
     // Spin the motors with the calculated angular velocity.
     dt_left.move_velocity(angular_velocity);
