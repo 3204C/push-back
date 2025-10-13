@@ -17,7 +17,7 @@ pros::MotorGroup dt_right({-6, 5, -4});
 pros::MotorGroup intake({10, -21});
 
 // TODO: Change port number placeholders
-pros::MotorGroup conveyor({16, -17});
+pros::MotorGroup conveyor({-9});
 
 // TODO: Change port number and offset placeholders
 pros::Gps gps(18, 0.0, 0.0);

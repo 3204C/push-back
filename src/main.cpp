@@ -9,7 +9,7 @@
 #include "autonomous.hpp"
 #include "drivetrain.hpp"
 #include "intake.hpp"
-// #include "conveyor.hpp"
+#include "conveyor.hpp"
 
 void debug()
 {
@@ -47,9 +47,9 @@ void initialize()
 
     // Set the conveyor belt motors' brake mode and encoder units, then reset their
     // positions to 0 degrees.
-    // conveyor.set_brake_mode_all(MOTOR_BRAKE_HOLD);
-	// conveyor.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
-	// conveyor.tare_position_all();
+    conveyor.set_brake_mode_all(MOTOR_BRAKE_HOLD);
+	conveyor.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
+	conveyor.tare_position_all();
 
     // Create a task to run the debugger asynchronously.
     // pros::Task debugger(debug);
@@ -137,8 +137,8 @@ void opcontrol()
         // Spin the conveyor belt using the controller. Pressing L1 spins the conveyor
         // belt upward, and pressing L2 spins the conveyor belt downward. Pressing both
         // or neither will not make the conveyor belt spin.
-        // conveyor_spin(controller.get_digital(DIGITAL_L1),
-        //     controller.get_digital(DIGITAL_L2));
+        conveyor_spin(controller.get_digital(DIGITAL_L1),
+            controller.get_digital(DIGITAL_L2));
 
 		pros::delay(20);
 	}
