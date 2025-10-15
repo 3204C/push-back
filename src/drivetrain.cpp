@@ -168,13 +168,23 @@ void dt_turn(double angle, int duration)
     // Determine the direction of rotation, then spin the motors as desired.
     if (angle > 0)
     {
-        dt_left.move_velocity(angular_velocity_centre);
-        dt_right.move_velocity(-angular_velocity_centre);
+        dt_left_front.move_velocity(angular_velocity_far);
+        dt_left_centre.move_velocity(angular_velocity_centre);
+        dt_left_back.move_velocity(angular_velocity_far);
+
+        dt_right_front.move_velocity(-angular_velocity_far);
+        dt_right_centre.move_velocity(-angular_velocity_centre);
+        dt_right_back.move_velocity(-angular_velocity_far);
     }
     else if (angle < 0)
     {
-        dt_left.move_velocity(-angular_velocity_centre);
-        dt_right.move_velocity(angular_velocity_centre);
+        dt_left_front.move_velocity(-angular_velocity_far);
+        dt_left_centre.move_velocity(-angular_velocity_centre);
+        dt_left_back.move_velocity(-angular_velocity_far);
+
+        dt_right_front.move_velocity(angular_velocity_far);
+        dt_right_centre.move_velocity(angular_velocity_centre);
+        dt_right_back.move_velocity(angular_velocity_far);
     }
     
     // The drivetrain will stop after the set duration has passed.

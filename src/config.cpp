@@ -11,19 +11,25 @@
 pros::Controller controller(CONTROLLER_MASTER);
 
 pros::MotorGroup dt_left({3, -2, 1});
+pros::Motor dt_left_front(dt_left.get_port(0));
+pros::Motor dt_left_centre(dt_left.get_port(1));
+pros::Motor dt_left_back(dt_left.get_port(2));
 
 pros::MotorGroup dt_right({-6, 5, -4});
+pros::Motor dt_right_front(dt_right.get_port(0));
+pros::Motor dt_right_centre(dt_right.get_port(1));
+pros::Motor dt_right_back(dt_right.get_port(2));
 
 pros::MotorGroup intake({10, -21});
 
 // TODO: Change port number placeholders
-pros::MotorGroup conveyor({16, -17});
+pros::Motor conveyor(-9);
 
 // TODO: Change port number and offset placeholders
 pros::Gps gps(18, 0.0, 0.0);
 
 // TODO: Change port number placeholder
-// pros::Optical optical(19);
+// pros::Optical optical();
 
 // TODO: Change port number placeholder
-// pros::Vision vision(20);
+// pros::Imu inertial();
