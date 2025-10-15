@@ -45,11 +45,26 @@
 extern "C" {
 #endif
 
-// TODO: Add description
 /**
- * [description]
+ * Displays a debugger on the Brain screen which shows the values given by the 
+ * GPS, Inertial and Optical Sensors.
  */
 void debug(void);
+
+/**
+ * Performs the autonomous routine on the left side of the field.
+ */
+void routine_auton_left(void);
+
+/**
+ * Performs the autonomous routine on the right side of the field.
+ */
+void routine_auton_right(void);
+
+/**
+ * Performs the driver control routine.
+ */
+void routine_driver_control(void);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.

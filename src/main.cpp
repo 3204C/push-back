@@ -6,21 +6,89 @@
  */
 
 #include "main.h"
-#include "autonomous.hpp"
 #include "drivetrain.hpp"
 #include "intake.hpp"
-// #include "conveyor.hpp"
+#include "conveyor.hpp"
+
+/// The type of routine the robot is set to perform.
+int routine;
 
 void debug()
 {
-    while (true)
-    {
-        pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps.get_position_x()));
-        pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps.get_position_y()));
-        pros::lcd::set_text(7, std::format("Heading: {:.2f}", gps.get_heading()));
+    pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps.get_position_x()));
+    pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps.get_position_y()));
+    pros::lcd::set_text(7, std::format("Heading: {:.2f}", gps.get_heading()));
 
-        pros::delay(100);
-    }
+    pros::delay(100);
+}
+
+void routine_auton_left()
+{
+    // Spin the intake inwards to pick up blocks.
+    intake_spin(1, 0);
+
+    // Move towards the centre blocks.
+    dt_move_straight(44.0, 2000);
+
+    // Stop the intake.
+    intake_spin(0, 0);
+
+    // Turn towards the centre goal.
+    dt_turn(45.0, 1000);
+
+    // Move towards the centre goal.
+    dt_move_straight(9.0, 1000);
+
+    // Spin the intake outwards to let go of the block.
+    intake_spin(0, 1, 1500);
+
+    // Set the routine to driver control after finishing.
+    routine = 0;
+}
+
+void routine_auton_right()
+{
+    // Spin the intake inwards to pick up blocks.
+    intake_spin(1, 0);
+
+    // Move towards the centre blocks.
+    dt_move_straight(44.0, 1500);
+
+    // Stop the intake.
+    intake_spin(0, 0);
+
+    // Turn towards the centre goal.
+    dt_turn(-45.0, 1000);
+
+    // Move towards the centre goal.
+    dt_move_straight(9.0, 1000);
+
+    // Spin the intake outwards to let go of the block.
+    intake_spin(0, 1, 1500);
+
+    // Set the routine to driver control after finishing.
+    routine = 0;
+}
+
+void routine_driver_control()
+{
+    // Control the drivetrain using voltage from the joysticks with a mininum
+    // voltage of 4 V. The left joystick controls the left side, and the right
+    // joystick controls the right side.
+    dt_move_voltage(controller.get_analog(ANALOG_LEFT_Y),
+        controller.get_analog(ANALOG_RIGHT_Y), 4);
+
+    // Spin the intake using the controller. Pressing R1 spins the intake inward,
+    // and pressing R2 spins the intake outward. Pressing both or neither will not
+    // make the intake spin.
+    intake_spin(controller.get_digital(DIGITAL_R1),
+        controller.get_digital(DIGITAL_R2));
+
+    // Spin the conveyor belt using the controller. Pressing L1 spins the conveyor
+    // belt upward, and pressing L2 spins the conveyor belt downward. Pressing both
+    // or neither will not make the conveyor belt spin.
+    conveyor_spin(controller.get_digital(DIGITAL_L1),
+        controller.get_digital(DIGITAL_L2));
 }
 
 void initialize()
@@ -28,7 +96,7 @@ void initialize()
     // Initialise the Brain screen.
     pros::lcd::initialize();
 
-	pros::lcd::set_text(0, "Program start");
+	pros::lcd::set_text(0, "Starting initialisation...");
 
     // Set the drivetrain motors' brake mode and encoder units, then reset their
     // positios to 0 degrees.
@@ -47,19 +115,31 @@ void initialize()
 
     // Set the conveyor belt motors' brake mode and encoder units, then reset their
     // positions to 0 degrees.
-    // conveyor.set_brake_mode_all(MOTOR_BRAKE_HOLD);
-	// conveyor.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
-	// conveyor.tare_position_all();
+    conveyor.set_brake_mode(MOTOR_BRAKE_HOLD);
+	conveyor.set_encoder_units(MOTOR_ENCODER_DEGREES);
+	conveyor.tare_position();
 
-    // Create a task to run the debugger asynchronously.
-    // pros::Task debugger(debug);
+    // Set up the routine selection.
+    routine = 0;
+    pros::lcd::set_text(1, "Routine: none/driver control");
 
-    auton_routine = 0;
+    pros::lcd::register_btn0_cb([]()
+    {
+        routine = 0;
+        pros::lcd::set_text(1, "Routine: none/driver control");
+    });
 
-    pros::lcd::set_text(1, "Autonomous routine selected: none");
-    pros::lcd::register_btn0_cb(auton_select_left);
-    pros::lcd::register_btn1_cb(auton_select_none);
-    pros::lcd::register_btn2_cb(auton_select_right);
+    pros::lcd::register_btn1_cb([]()
+    {
+        routine = 1;
+        pros::lcd::set_text(1, "Routine: left side autonomous");
+    });
+
+    pros::lcd::register_btn2_cb([]()
+    {
+        routine = 2;
+        pros::lcd::set_text(1, "Routine: right side autonomous");
+    });
 }
 
 void disabled() {}
@@ -68,78 +148,34 @@ void competition_initialize() {}
 
 void autonomous()
 {
-    pros::lcd::set_text(2, "Autonomous start");
-
-    auton_routine = 0;
+    pros::lcd::set_text(0, "Starting autonomous...");
 
     // Left side autonomous routine
-    if (auton_routine == 1)
-    {
-        // Spin the intake inwards to pick up blocks.
-        intake_spin(1, 0);
-
-        // Move towards the centre blocks.
-        dt_move_straight(44.0, 2000);
-
-        // Stop the intake.
-        intake_spin(0, 0);
-
-        // Turn towards the centre goal.
-        dt_turn(45.0, 1000);
-
-        // Move towards the centre goal.
-        dt_move_straight(9.0, 1000);
-
-        intake_spin(0, 1, 1500);
-    }
+    if (routine == 1) { routine_auton_left(); }
 
     // Right side autonomous routine
-    else if (auton_routine == 2)
-    {
-        // Spin the intake inwards to pick up blocks.
-        intake_spin(1, 0);
-
-        // Move towards the centre blocks.
-        dt_move_straight(44.0, 1500);
-
-        // Stop the intake.
-        intake_spin(0, 0);
-
-        // Turn towards the centre goal.
-        dt_turn(-45.0, 1000);
-
-        // Move towards the centre goal.
-        dt_move_straight(9.0, 1000);
-
-        intake_spin(0, 1, 1500);
-    }
+    else if (routine == 2) { routine_auton_right(); }
 }
 
 void opcontrol()
 {
-    pros::lcd::set_text(3, "Driver control start");
+    pros::lcd::set_text(0, "Starting driver control...");
 
     // Repeat until driver control is over.
 	while (true)
 	{
-        // Control the drivetrain using voltage from the joysticks with a mininum
-        // voltage of 4 V. The left joystick controls the left side, and the right
-        // joystick controls the right side.
-		dt_move_voltage(controller.get_analog(ANALOG_LEFT_Y),
-            controller.get_analog(ANALOG_RIGHT_Y), 4);
+        // Driver control routine
+        if (routine == 0) { routine_driver_control(); }
 
-        // Spin the intake using the controller. Pressing R1 spins the intake inward,
-        // and pressing R2 spins the intake outward. Pressing both or neither will not
-        // make the intake spin.
-        intake_spin(controller.get_digital(DIGITAL_R1),
-            controller.get_digital(DIGITAL_R2));
+        // Left side autonomous routine
+        else if (routine == 1) { routine_auton_left(); }
 
-        // Spin the conveyor belt using the controller. Pressing L1 spins the conveyor
-        // belt upward, and pressing L2 spins the conveyor belt downward. Pressing both
-        // or neither will not make the conveyor belt spin.
-        // conveyor_spin(controller.get_digital(DIGITAL_L1),
-        //     controller.get_digital(DIGITAL_L2));
+        // Right side autonomous routine
+        else if (routine == 2) { routine_auton_right(); }
+        
+        // Run the debugger on the Brain screen.
+        // debug();
 
-		pros::delay(20);
+        pros::delay(100);
 	}
 }
