@@ -9,6 +9,7 @@
 #include "drivetrain.hpp"
 #include "intake.hpp"
 #include "conveyor.hpp"
+// #include "outtake.hpp"
 
 /// The type of routine the robot is set to perform.
 int routine;
@@ -89,6 +90,12 @@ void routine_driver_control()
     // or neither will not make the conveyor belt spin.
     conveyor_spin(controller.get_digital(DIGITAL_L1),
         controller.get_digital(DIGITAL_L2));
+    
+    // // Spin the outtake using the controller. Pressing R1 spins the outtake outward,
+    // // and pressing R2 spins the outtake inward. Pressing both or neither will not
+    // // make the outtake spin.
+    // outtake_spin(controller.get_digital(DIGITAL_R1),
+    //     controller.get_digital(DIGITAL_R2));
 }
 
 void initialize()
@@ -113,33 +120,39 @@ void initialize()
 	intake.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
 	intake.tare_position_all();
 
-    // Set the conveyor belt motors' brake mode and encoder units, then reset their
-    // positions to 0 degrees.
+    // Set the conveyor belt motor's brake mode and encoder units, then reset its
+    // position to 0 degrees.
     conveyor.set_brake_mode(MOTOR_BRAKE_HOLD);
 	conveyor.set_encoder_units(MOTOR_ENCODER_DEGREES);
 	conveyor.tare_position();
+
+    // // Set the outtake motor's brake mode and encoder units, then reset its
+    // // position to 0 degrees.
+    // outtake.set_brake_mode_all(MOTOR_BRAKE_HOLD);
+	// outtake.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
+	// outtake.tare_position_all();
 
     // Set up the routine selection.
     routine = 0;
     pros::lcd::set_text(1, "Routine: none/driver control");
 
-    pros::lcd::register_btn0_cb([]()
-    {
-        routine = 0;
-        pros::lcd::set_text(1, "Routine: none/driver control");
-    });
+    // pros::lcd::register_btn0_cb([]()
+    // {
+    //     routine = 0;
+    //     pros::lcd::set_text(1, "Routine: none/driver control");
+    // });
 
-    pros::lcd::register_btn1_cb([]()
-    {
-        routine = 1;
-        pros::lcd::set_text(1, "Routine: left side autonomous");
-    });
+    // pros::lcd::register_btn1_cb([]()
+    // {
+    //     routine = 1;
+    //     pros::lcd::set_text(1, "Routine: left side autonomous");
+    // });
 
-    pros::lcd::register_btn2_cb([]()
-    {
-        routine = 2;
-        pros::lcd::set_text(1, "Routine: right side autonomous");
-    });
+    // pros::lcd::register_btn2_cb([]()
+    // {
+    //     routine = 2;
+    //     pros::lcd::set_text(1, "Routine: right side autonomous");
+    // });
 }
 
 void disabled() {}
@@ -164,14 +177,16 @@ void opcontrol()
     // Repeat until driver control is over.
 	while (true)
 	{
-        // Driver control routine
-        if (routine == 0) { routine_driver_control(); }
+        routine_driver_control();
 
-        // Left side autonomous routine
-        else if (routine == 1) { routine_auton_left(); }
+        // // Driver control routine
+        // if (routine == 0) { routine_driver_control(); }
 
-        // Right side autonomous routine
-        else if (routine == 2) { routine_auton_right(); }
+        // // Left side autonomous routine
+        // else if (routine == 1) { routine_auton_left(); }
+
+        // // Right side autonomous routine
+        // else if (routine == 2) { routine_auton_right(); }
         
         // Run the debugger on the Brain screen.
         // debug();

@@ -38,5 +38,5 @@ void conveyor_spin(int is_upward, int is_downward, int duration)
 
     // The conveyor belt will stop after the set duration has passed.
     pros::delay(duration);
-    intake.brake();
+    conveyor.brake();
 }

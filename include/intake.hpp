@@ -9,7 +9,7 @@
 #define INTAKE_HPP
 
 /**
- * Spins the intake motor in a specified direction indefinitely.
+ * Spins the intake motors in a specified direction indefinitely.
  * 
  * @param is_inward Returns 1 if the inward button is pressed and 0 if not.
  * @param is_outward Returns 1 if the outwards button is pressed and 0 if not.
@@ -17,7 +17,7 @@
 void intake_spin(int is_inward, int is_outward);
 
 /**
- * Spins the intake motor in a specified direction for an amount of time.
+ * Spins the intake motors in a specified direction for an amount of time.
  * 
  * @param is_inward Returns 1 if the inward button is pressed and 0 if not.
  * @param is_outward Returns 1 if the outward button is pressed and 0 if not.

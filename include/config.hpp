@@ -29,6 +29,9 @@ extern pros::MotorGroup intake;
 /// The conveyor belt motor.
 extern pros::Motor conveyor;
 
+/// The outtake motor.
+extern pros::Motor outtake;
+
 /// The GPS Sensor.
 extern pros::Gps gps;
 
