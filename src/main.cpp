@@ -9,7 +9,7 @@
 #include "drivetrain.hpp"
 #include "intake.hpp"
 #include "conveyor.hpp"
-// #include "outtake.hpp"
+#include "outtake.hpp"
 
 /// The type of routine the robot is set to perform.
 int routine;
@@ -79,11 +79,11 @@ void routine_driver_control()
     dt_move_voltage(controller.get_analog(ANALOG_LEFT_Y),
         controller.get_analog(ANALOG_RIGHT_Y), 4);
 
-    // Spin the intake using the controller. Pressing R1 spins the intake inward,
-    // and pressing R2 spins the intake outward. Pressing both or neither will not
+    // Spin the intake using the controller. Pressing L1 spins the intake inward,
+    // and pressing L2 spins the intake outward. Pressing both or neither will not
     // make the intake spin.
-    intake_spin(controller.get_digital(DIGITAL_R1),
-        controller.get_digital(DIGITAL_R2));
+    intake_spin(controller.get_digital(DIGITAL_L1),
+        controller.get_digital(DIGITAL_L2));
 
     // Spin the conveyor belt using the controller. Pressing L1 spins the conveyor
     // belt upward, and pressing L2 spins the conveyor belt downward. Pressing both
@@ -91,11 +91,11 @@ void routine_driver_control()
     conveyor_spin(controller.get_digital(DIGITAL_L1),
         controller.get_digital(DIGITAL_L2));
     
-    // // Spin the outtake using the controller. Pressing R1 spins the outtake outward,
-    // // and pressing R2 spins the outtake inward. Pressing both or neither will not
-    // // make the outtake spin.
-    // outtake_spin(controller.get_digital(DIGITAL_R1),
-    //     controller.get_digital(DIGITAL_R2));
+    // Spin the outtake using the controller. Pressing R1 spins the outtake outward,
+    // and pressing R2 spins the outtake inward. Pressing both or neither will not
+    // make the outtake spin.
+    outtake_spin(controller.get_digital(DIGITAL_R1),
+        controller.get_digital(DIGITAL_R2));
 }
 
 void initialize()

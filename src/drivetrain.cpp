@@ -48,7 +48,7 @@ double distance_to_point(double x, double y)
     double delta_y = y - gps.get_position_y();
 
     // Calculate the absolute distance using the Pythagorean theorem.
-    double distance = std::sqrt(delta_x * delta_x + delta_y + delta_y);
+    double distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
     // Convert the distance from metres to inches.
     distance *= 39.37;
