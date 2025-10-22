@@ -19,8 +19,6 @@ void debug()
     pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps.get_position_x()));
     pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps.get_position_y()));
     pros::lcd::set_text(7, std::format("Heading: {:.2f}", gps.get_heading()));
-
-    pros::delay(100);
 }
 
 void routine_auton_left()
@@ -106,31 +104,31 @@ void initialize()
 	pros::lcd::set_text(0, "Starting initialisation...");
 
     // Set the drivetrain motors' brake mode and encoder units, then reset their
-    // positios to 0 degrees.
+    // positions to 0 rotations.
 	dt_left.set_brake_mode_all(MOTOR_BRAKE_BRAKE);
-	dt_left.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
+	dt_left.set_encoder_units_all(MOTOR_ENCODER_ROTATIONS);
 	dt_left.tare_position_all();
 	dt_right.set_brake_mode_all(MOTOR_BRAKE_BRAKE);
-	dt_right.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
+	dt_right.set_encoder_units_all(MOTOR_ENCODER_ROTATIONS);
 	dt_right.tare_position_all();
 
     // Set the intake motors' brake mode and encoder units, then reset their
-    // positions to 0 degrees.
+    // positions to 0 rotations.
     intake.set_brake_mode_all(MOTOR_BRAKE_HOLD);
-	intake.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
+	intake.set_encoder_units_all(MOTOR_ENCODER_ROTATIONS);
 	intake.tare_position_all();
 
     // Set the conveyor belt motor's brake mode and encoder units, then reset its
-    // position to 0 degrees.
+    // position to 0 rotations.
     conveyor.set_brake_mode(MOTOR_BRAKE_HOLD);
-	conveyor.set_encoder_units(MOTOR_ENCODER_DEGREES);
+	conveyor.set_encoder_units(MOTOR_ENCODER_ROTATIONS);
 	conveyor.tare_position();
 
-    // // Set the outtake motor's brake mode and encoder units, then reset its
-    // // position to 0 degrees.
-    // outtake.set_brake_mode_all(MOTOR_BRAKE_HOLD);
-	// outtake.set_encoder_units_all(MOTOR_ENCODER_DEGREES);
-	// outtake.tare_position_all();
+    // Set the outtake motor's brake mode and encoder units, then reset its
+    // position to 0 rotations.
+    outtake.set_brake_mode_all(MOTOR_BRAKE_HOLD);
+	outtake.set_encoder_units_all(MOTOR_ENCODER_ROTATIONS);
+	outtake.tare_position_all();
 
     // Set up the routine selection.
     routine = 0;
@@ -177,10 +175,8 @@ void opcontrol()
     // Repeat until driver control is over.
 	while (true)
 	{
-        routine_driver_control();
-
-        // // Driver control routine
-        // if (routine == 0) { routine_driver_control(); }
+        // Driver control routine
+        if (routine == 0) { routine_driver_control(); }
 
         // // Left side autonomous routine
         // else if (routine == 1) { routine_auton_left(); }
@@ -188,7 +184,7 @@ void opcontrol()
         // // Right side autonomous routine
         // else if (routine == 2) { routine_auton_right(); }
         
-        // Run the debugger on the Brain screen.
+        // // Run the debugger on the Brain screen.
         // debug();
 
         pros::delay(100);

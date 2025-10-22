@@ -13,15 +13,9 @@ extern pros::Controller controller;
 
 /// The motors on the left side of the drivetrain.
 extern pros::MotorGroup dt_left;
-extern pros::Motor dt_left_front;
-extern pros::Motor dt_left_centre;
-extern pros::Motor dt_left_back;
 
 /// The motors on the right side of the drivetrain.
 extern pros::MotorGroup dt_right;
-extern pros::Motor dt_right_front;
-extern pros::Motor dt_right_centre;
-extern pros::Motor dt_right_back;
 
 /// The intake motors.
 extern pros::MotorGroup intake;
