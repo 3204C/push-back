@@ -9,10 +9,7 @@
 #include "main.h"
 #include "outtake.hpp"
 
-// The voltage of the outtake motor when spinning.
-#define OUTTAKE_VOLTAGE 127
-
-void outtake_spin(int is_outward, int is_inward)
+void outtake_spin(int is_outward, int is_inward, int voltage)
 {   
     // Calculate the net direction.
     int direction = is_outward - is_inward;
@@ -27,14 +24,14 @@ void outtake_spin(int is_outward, int is_inward)
     // if the direction is negative.
     else
     {
-        outtake.move(OUTTAKE_VOLTAGE * direction);
+        outtake.move(voltage * direction);
     }
 }
 
-void outtake_spin(int is_outward, int is_inward, int duration)
+void outtake_spin(int is_outward, int is_inward, int voltage, int duration)
 {   
     // Spin the outtake according to the direction given.
-    outtake_spin(is_outward, is_inward);
+    outtake_spin(is_outward, is_inward, voltage);
 
     // The outtake will stop after the set duration has passed.
     pros::delay(duration);

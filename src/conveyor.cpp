@@ -9,10 +9,7 @@
 #include "main.h"
 #include "conveyor.hpp"
 
-// The voltage of the conveyor belt motor when spinning.
-#define CONVEYOR_VOLTAGE 127
-
-void conveyor_spin(int is_upward, int is_downward)
+void conveyor_spin(int is_upward, int is_downward, int voltage)
 {   
     // Calculate the net direction.
     int direction = is_upward - is_downward;
@@ -27,14 +24,14 @@ void conveyor_spin(int is_upward, int is_downward)
     // downward if the direction is negative.
     else
     {
-        conveyor.move(CONVEYOR_VOLTAGE * direction);
+        conveyor.move(voltage * direction);
     }
 }
 
-void conveyor_spin(int is_upward, int is_downward, int duration)
+void conveyor_spin(int is_upward, int is_downward, int voltage, int duration)
 {   
     // Spin the conveyor belt according to the direction given.
-    conveyor_spin(is_upward, is_downward);
+    conveyor_spin(is_upward, is_downward, voltage);
 
     // The conveyor belt will stop after the set duration has passed.
     pros::delay(duration);

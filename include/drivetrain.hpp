@@ -39,8 +39,9 @@ double angle_from_robot(double x, double y);
  * @param left_voltage The voltage of each motor on the left side of the drivetrain.
  * @param right_voltage The voltage of each motor on the right side of the drivetrain.
  * @param min_voltage The minimum voltage required to spin the motors.
+ * @param max_voltage The maximum voltage that the motors can reach.
  */
-void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage);
+void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage, int max_voltage);
 
 /**
  * Controls the drivetrain motors using voltage for an amount of time.
@@ -49,9 +50,10 @@ void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage);
  * @param left_voltage The voltage of each motor on the left side of the drivetrain.
  * @param right_voltage The voltage of each motor on the right side of the drivetrain.
  * @param min_voltage The minimum voltage required to spin the motors.
+ * @param max_voltage The maximum voltage that the motors can reach.
  * @param duration The time it takes for the robot to move (in ms).
  */
-void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage, int duration);
+void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage, int max_voltage, int duration);
 
 /**
  * Turns the drivetrain at a given angle for a duration of time.

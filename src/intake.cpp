@@ -9,10 +9,7 @@
 #include "main.h"
 #include "intake.hpp"
 
-// The voltage of the intake motor when spinning.
-#define INTAKE_VOLTAGE 127
-
-void intake_spin(int is_inward, int is_outward)
+void intake_spin(int is_inward, int is_outward, int voltage)
 {   
     // Calculate the net direction.
     int direction = is_inward - is_outward;
@@ -27,14 +24,14 @@ void intake_spin(int is_inward, int is_outward)
     // if the direction is negative.
     else
     {
-        intake.move(INTAKE_VOLTAGE * direction);
+        intake.move(voltage * direction);
     }
 }
 
-void intake_spin(int is_inward, int is_outward, int duration)
+void intake_spin(int is_inward, int is_outward, int voltage, int duration)
 {   
     // Spin the intake according to the direction given.
-    intake_spin(is_inward, is_outward);
+    intake_spin(is_inward, is_outward, voltage);
 
     // The intake will stop after the set duration has passed.
     pros::delay(duration);

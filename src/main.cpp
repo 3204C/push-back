@@ -24,13 +24,13 @@ void debug()
 void routine_auton_left()
 {
     // Spin the intake inwards to pick up blocks.
-    intake_spin(1, 0);
+    intake_spin(1, 0, 127);
 
     // Move towards the centre blocks.
     dt_move_straight(44.0, 2000);
 
     // Stop the intake.
-    intake_spin(0, 0);
+    intake_spin(0, 0, 127);
 
     // Turn towards the centre goal.
     dt_turn(45.0, 1000);
@@ -39,7 +39,7 @@ void routine_auton_left()
     dt_move_straight(9.0, 1000);
 
     // Spin the intake outwards to let go of the block.
-    intake_spin(0, 1, 1500);
+    intake_spin(0, 1, 127, 1500);
 
     // Set the routine to driver control after finishing.
     routine = 0;
@@ -48,13 +48,13 @@ void routine_auton_left()
 void routine_auton_right()
 {
     // Spin the intake inwards to pick up blocks.
-    intake_spin(1, 0);
+    intake_spin(1, 0, 127);
 
     // Move towards the centre blocks.
     dt_move_straight(44.0, 1500);
 
     // Stop the intake.
-    intake_spin(0, 0);
+    intake_spin(0, 0, 127);
 
     // Turn towards the centre goal.
     dt_turn(-45.0, 1000);
@@ -63,7 +63,7 @@ void routine_auton_right()
     dt_move_straight(9.0, 1000);
 
     // Spin the intake outwards to let go of the block.
-    intake_spin(0, 1, 1500);
+    intake_spin(0, 1, 127, 1500);
 
     // Set the routine to driver control after finishing.
     routine = 0;
@@ -71,29 +71,28 @@ void routine_auton_right()
 
 void routine_driver_control()
 {
-    // Control the drivetrain using voltage from the joysticks with a mininum
-    // voltage of 4 V. The left joystick controls the left side, and the right
-    // joystick controls the right side.
+    // Control the drivetrain using voltage from the joysticks. The left joystick
+    // controls the left side, and the right joystick controls the right side.
     dt_move_voltage(controller.get_analog(ANALOG_LEFT_Y),
-        controller.get_analog(ANALOG_RIGHT_Y), 4);
+        controller.get_analog(ANALOG_RIGHT_Y), 4, 127);
 
     // Spin the intake using the controller. Pressing L1 spins the intake inward,
     // and pressing L2 spins the intake outward. Pressing both or neither will not
     // make the intake spin.
     intake_spin(controller.get_digital(DIGITAL_L1),
-        controller.get_digital(DIGITAL_L2));
+        controller.get_digital(DIGITAL_L2), 127);
 
     // Spin the conveyor belt using the controller. Pressing L1 spins the conveyor
     // belt upward, and pressing L2 spins the conveyor belt downward. Pressing both
     // or neither will not make the conveyor belt spin.
     conveyor_spin(controller.get_digital(DIGITAL_L1),
-        controller.get_digital(DIGITAL_L2));
+        controller.get_digital(DIGITAL_L2), 127);
     
     // Spin the outtake using the controller. Pressing R1 spins the outtake outward,
     // and pressing R2 spins the outtake inward. Pressing both or neither will not
     // make the outtake spin.
     outtake_spin(controller.get_digital(DIGITAL_R1),
-        controller.get_digital(DIGITAL_R2));
+        controller.get_digital(DIGITAL_R2), 127);
 }
 
 void initialize()

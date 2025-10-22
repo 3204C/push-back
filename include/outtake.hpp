@@ -13,16 +13,18 @@
  * 
  * @param is_outward Returns 1 if the outward button is pressed and 0 if not.
  * @param is_inward Returns 1 if the inward button is pressed and 0 if not.
+ * @param voltage The voltage of the outtake motor when spinning.
  */
-void outtake_spin(int is_outward, int is_inward);
+void outtake_spin(int is_outward, int is_inward, int voltage);
 
 /**
  * Spins the outtake motor in a specified direction for an amount of time.
  * 
  * @param is_outward Returns 1 if the outward button is pressed and 0 if not.
  * @param is_inward Returns 1 if the inward button is pressed and 0 if not.
+ * @param voltage The voltage of the outtake motor when spinning.
  * @param duration The amount of time (in ms) the outtake motor spins for.
  */
-void outtake_spin(int is_outward, int is_inward, int duration);
+void outtake_spin(int is_outward, int is_inward, int voltage, int duration);
 
 #endif

@@ -11,9 +11,6 @@
 #include "drivetrain.hpp"
 #include <cmath>
 
-/// The maximum voltage each motor can take.
-#define MAX_DT_VOLTAGE 127
-
 /// The radius of each drivetrain wheel (in inches).
 #define WHEEL_RADIUS 2
 
@@ -92,7 +89,7 @@ double angle_from_robot(double x, double y)
     return std::max(angle_1, angle_2);
 }
 
-void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage)
+void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage, int max_voltage)
 {
     // Spin the left side motors when the size of the left side's voltage is
     // greater than the minimum required voltage.
@@ -107,8 +104,8 @@ void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage)
          * 0 <= (V - min) / (127 - min) <= 1            (divide by 127 - 4)
          * 0 <= 127 * (V - min) / (127 - min) <= 127    (multiply by 127)
          */
-        dt_left.move((left_voltage - min_voltage) * MAX_DT_VOLTAGE / 
-            (MAX_DT_VOLTAGE - min_voltage));
+        dt_left.move((left_voltage - min_voltage) * max_voltage / 
+            (max_voltage - min_voltage));
     }
     else
     {
@@ -120,8 +117,8 @@ void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage)
     // greater than the minimum required voltage.
     if (abs(right_voltage) > min_voltage)
     {
-        dt_right.move((right_voltage - min_voltage) * MAX_DT_VOLTAGE / 
-            (MAX_DT_VOLTAGE - min_voltage));
+        dt_right.move((right_voltage - min_voltage) * max_voltage / 
+            (max_voltage - min_voltage));
     }
     else
     {
@@ -130,10 +127,10 @@ void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage)
     }
 }
 
-void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage, int duration)
+void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage, int max_voltage, int duration)
 {
     // Spin the motors with the specified values.
-    dt_move_voltage(left_voltage, right_voltage, min_voltage);
+    dt_move_voltage(left_voltage, right_voltage, min_voltage, max_voltage);
     
     // The drivetrain will stop after the set duration has passed.
     pros::delay(duration);
