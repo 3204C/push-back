@@ -26,21 +26,6 @@
 /// Pi to 7 significant figures.
 #define PI 3.141593
 
-double degrees_to_radians(double angle)
-{
-    return angle / 180 * PI;
-}
-
-double radians_to_degrees(double angle)
-{
-    return angle * 180 / PI;
-}
-
-double radians_to_revolutions(double angle)
-{
-    return angle / (2 * PI);
-}
-
 double distance_to_point(double x, double y)
 {
     // Calculate the x and y component distances.
@@ -66,7 +51,7 @@ double heading_from_robot(double x, double y)
     double heading = std::atan2(delta_y, delta_x);
 
     // Convert the angle from radians to degrees.
-    heading = radians_to_degrees(heading);
+    heading * 180 / PI;
 
     // If the angle is negative, add 360 degrees to turn it positive.
     if (heading < 0) { heading += 360; }
@@ -89,20 +74,21 @@ double angle_from_robot(double x, double y)
     return std::max(angle_1, angle_2);
 }
 
-void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage, int max_voltage)
+void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage,
+    int max_voltage)
 {
     // Spin the left side motors when the size of the left side's voltage is
     // greater than the minimum required voltage.
     if (abs(left_voltage) > min_voltage)
     {
         /**
-         * The range of the input voltage is changed from min <= V <= 127 to
-         * 0 <= 127 * (V - min) / (127 - min) <= 127 using the calculations below:
+         * The range of the input voltage is changed from min <= V <= max to
+         * 0 <= max * (V - min) / (max - min) <= max using the calculations below:
          * 
-         * 4 <= V <= 127
-         * 0 <= V - min <= 127 - min                    (subtract d)
-         * 0 <= (V - min) / (127 - min) <= 1            (divide by 127 - 4)
-         * 0 <= 127 * (V - min) / (127 - min) <= 127    (multiply by 127)
+         * min <= V <= max
+         * 0 <= V - min <= max - min                    (subtract min)
+         * 0 <= (V - min) / (max - min) <= 1            (divide by max - min)
+         * 0 <= max * (V - min) / (max - min) <= max    (multiply by max)
          */
         dt_left.move((left_voltage - min_voltage) * max_voltage / 
             (max_voltage - min_voltage));
@@ -127,7 +113,8 @@ void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage, int m
     }
 }
 
-void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage, int max_voltage, int duration)
+void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage,
+    int max_voltage, int duration)
 {
     // Spin the motors with the specified values.
     dt_move_voltage(left_voltage, right_voltage, min_voltage, max_voltage);
@@ -138,12 +125,12 @@ void dt_move_voltage(int left_voltage, int right_voltage, int min_voltage, int m
     dt_right.brake();
 }
 
-void dt_turn(double angle, int duration)
+void dt_turn(double angle, int duration, bool is_blocking)
 {
     /**
      * Calculate the revolutions each motor makes.
      * 
-     * turning radius (R) = 8.023380 in (7 sf)
+     * turning radius (R) = 7.5 in
      * wheel circumference (c) = 12.56637 in (7 sf)
      * turning angle (theta) = [angle]
      * 
@@ -151,8 +138,7 @@ void dt_turn(double angle, int duration)
      * distance (d) = C * theta / 360
      * revolutions = d / c
      */
-
-    double turning_radius = 8.02338;
+    double turning_radius = TRACK_WIDTH / 2;
     double turning_circumference = turning_radius * 2 * PI;
     double distance = turning_circumference * angle / 360;
     double revolutions = distance / WHEEL_CIRCUMFERENCE;
@@ -169,31 +155,29 @@ void dt_turn(double angle, int duration)
      */
     double velocity = distance / duration * 60000;
     double angular_velocity = velocity / WHEEL_RADIUS;
-    angular_velocity = radians_to_revolutions(angular_velocity);
+    angular_velocity /= 2 * PI;
 
-    // Determine the direction of rotation, then spin the motors.
-    if (angle > 0)
+    // Spin the motors.
+    dt_left.move_relative(revolutions, angular_velocity);
+    dt_right.move_relative(-revolutions, angular_velocity);
+
+    // If blocking is enabled, wait for the motors to finish spinning.
+    if (is_blocking)
     {
-        dt_left.move_relative(revolutions, angular_velocity);
-        dt_right.move_relative(-revolutions, angular_velocity);
-    }
-    else if (angle < 0)
-    {
-        dt_left.move_relative(-revolutions, angular_velocity);
-        dt_right.move_relative(revolutions, angular_velocity);
+        pros::delay(duration + 50);
     }
 }
 
-void dt_turn(double x, double y, int duration)
+void dt_turn(double x, double y, int duration, bool is_blocking)
 {
     // Calculate the smallest angle that the robot can turn to face the point.
     double angle = angle_from_robot(x, y);
 
     // Turn towards the point.
-    dt_turn(angle, duration);
+    dt_turn(angle, duration, is_blocking);
 }
 
-void dt_move_straight(double distance, int duration)
+void dt_move_straight(double distance, int duration, bool is_blocking)
 {
     /**
      * Calculate the revolutions each motor makes.
@@ -217,14 +201,21 @@ void dt_move_straight(double distance, int duration)
      */
     double velocity = distance / duration * 60000;
     double angular_velocity = velocity / WHEEL_RADIUS;
-    angular_velocity = radians_to_revolutions(angular_velocity);
+    angular_velocity /= 2 * PI;
 
     // Spin the motors.
     dt_left.move_relative(revolutions, angular_velocity);
     dt_right.move_relative(revolutions, angular_velocity);
+
+    // If blocking is enabled, wait for the motors to finish spinning.
+    if (is_blocking)
+    {
+        pros::delay(duration + 50);
+    }
 }
 
-void dt_move_straight(double x, double y, int turn_duration, int move_duration, double end_distance)
+void dt_move_straight(double x, double y, int turn_duration, int move_duration,
+    double end_distance, bool is_blocking)
 {   
     // Calculate the distance between the robot and the given point.
     double distance = distance_to_point(x, y);
@@ -233,8 +224,8 @@ void dt_move_straight(double x, double y, int turn_duration, int move_duration, 
     distance -= end_distance;
 
     // Turn towards the point.
-    dt_turn(x, y, turn_duration);
+    dt_turn(x, y, turn_duration, true);
 
     // Move towards the point.
-    dt_move_straight(distance, move_duration);
+    dt_move_straight(distance, move_duration, is_blocking);
 }

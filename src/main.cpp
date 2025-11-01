@@ -11,7 +11,7 @@
 #include "conveyor.hpp"
 #include "outtake.hpp"
 
-/// The type of routine the robot is set to perform.
+/// The number of the routine the robot is set to perform.
 int routine;
 
 void debug()
@@ -23,24 +23,6 @@ void debug()
 
 void routine_auton_left()
 {
-    // Spin the intake inwards to pick up blocks.
-    intake_spin(1, 0, 127);
-
-    // Move towards the centre blocks.
-    dt_move_straight(44.0, 2000);
-
-    // Stop the intake.
-    intake_spin(0, 0, 127);
-
-    // Turn towards the centre goal.
-    dt_turn(45.0, 1000);
-
-    // Move towards the centre goal.
-    dt_move_straight(9.0, 1000);
-
-    // Spin the intake outwards to let go of the block.
-    intake_spin(0, 1, 127, 1500);
-
     // Set the routine to driver control after finishing.
     routine = 0;
 }
@@ -51,19 +33,28 @@ void routine_auton_right()
     intake_spin(1, 0, 127);
 
     // Move towards the centre blocks.
-    dt_move_straight(44.0, 1500);
+    dt_move_straight(42.0, 2500, true);
 
     // Stop the intake.
     intake_spin(0, 0, 127);
 
     // Turn towards the centre goal.
-    dt_turn(-45.0, 1000);
+    dt_turn(-45.0, 1000, true);
 
     // Move towards the centre goal.
-    dt_move_straight(9.0, 1000);
+    dt_move_straight(6.0, 1000, true);
 
     // Spin the intake outwards to let go of the block.
-    intake_spin(0, 1, 127, 1500);
+    intake_spin(0, 1, 127, 2000);
+
+    // Spin the conveyor downwards.
+    conveyor_spin(0, 1, 127, 2000);
+
+    // Spin the intake outwards to let go of the block.
+    intake_spin(0, 1, 127, 2000);
+
+    // Move towards the centre goal.
+    dt_move_straight(3.0, 1000, true);
 
     // Set the routine to driver control after finishing.
     routine = 0;
@@ -73,26 +64,34 @@ void routine_driver_control()
 {
     // Control the drivetrain using voltage from the joysticks. The left joystick
     // controls the left side, and the right joystick controls the right side.
-    dt_move_voltage(controller.get_analog(ANALOG_LEFT_Y),
-        controller.get_analog(ANALOG_RIGHT_Y), 4, 127);
-
+    if (controller.get_digital(DIGITAL_DOWN))
+    {
+        dt_move_voltage(controller.get_analog(ANALOG_RIGHT_Y) * -1,
+            controller.get_analog(ANALOG_LEFT_Y) * -1, 4, 127);
+    }
+    else
+    {
+        dt_move_voltage(controller.get_analog(ANALOG_LEFT_Y),
+            controller.get_analog(ANALOG_RIGHT_Y), 4, 127);
+    }
+    
     // Spin the intake using the controller. Pressing L1 spins the intake inward,
     // and pressing L2 spins the intake outward. Pressing both or neither will not
     // make the intake spin.
-    intake_spin(controller.get_digital(DIGITAL_L1),
-        controller.get_digital(DIGITAL_L2), 127);
+    intake_spin(controller.get_digital(DIGITAL_R1),
+        controller.get_digital(DIGITAL_R2), 127);
 
     // Spin the conveyor belt using the controller. Pressing L1 spins the conveyor
     // belt upward, and pressing L2 spins the conveyor belt downward. Pressing both
     // or neither will not make the conveyor belt spin.
-    conveyor_spin(controller.get_digital(DIGITAL_L1),
-        controller.get_digital(DIGITAL_L2), 127);
+    conveyor_spin(controller.get_digital(DIGITAL_R1),
+        controller.get_digital(DIGITAL_R2), 127);
     
     // Spin the outtake using the controller. Pressing R1 spins the outtake outward,
     // and pressing R2 spins the outtake inward. Pressing both or neither will not
     // make the outtake spin.
-    outtake_spin(controller.get_digital(DIGITAL_R1),
-        controller.get_digital(DIGITAL_R2), 127);
+    outtake_spin(controller.get_digital(DIGITAL_L1),
+        controller.get_digital(DIGITAL_L2), 31);
 }
 
 void initialize()
@@ -129,27 +128,54 @@ void initialize()
 	outtake.set_encoder_units_all(MOTOR_ENCODER_ROTATIONS);
 	outtake.tare_position_all();
 
-    // Set up the routine selection.
+        // Set up the routine selection.
     routine = 0;
     pros::lcd::set_text(1, "Routine: none/driver control");
+    controller.set_text(0, 0, "Routine: none/driver");
 
-    // pros::lcd::register_btn0_cb([]()
-    // {
-    //     routine = 0;
-    //     pros::lcd::set_text(1, "Routine: none/driver control");
-    // });
+    // Routine selection with brain buttons
+    pros::lcd::register_btn0_cb([]()
+    {
+        routine = 0;
+        pros::lcd::set_text(1, "Routine: none/driver control");
+        controller.set_text(0, 0, "Routine: none/driver");
+    });
 
     // pros::lcd::register_btn1_cb([]()
     // {
     //     routine = 1;
     //     pros::lcd::set_text(1, "Routine: left side autonomous");
+    //     controller.set_text(0, 0, "Routine: left auton");
     // });
 
-    // pros::lcd::register_btn2_cb([]()
+    pros::lcd::register_btn2_cb([]()
+    {
+        routine = 2;
+        pros::lcd::set_text(1, "Routine: right side autonomous");
+        controller.set_text(0, 0, "Routine: right auton");
+    });
+
+    // // Routine selection with controller buttons
+    // if (controller.get_digital(DIGITAL_X))
+    // {
+    //     routine = 0;
+    //     pros::lcd::set_text(1, "Routine: none/driver control");
+    //     controller.set_text(0, 0, "Routine: none/driver");
+    // }
+
+    // else if (controller.get_digital(DIGITAL_Y))
+    // {
+    //     routine = 1;
+    //     pros::lcd::set_text(1, "Routine: left side autonomous");
+    //     controller.set_text(0, 0, "Routine: left auton");
+    // }
+
+    // else if (controller.get_digital(DIGITAL_A))
     // {
     //     routine = 2;
     //     pros::lcd::set_text(1, "Routine: right side autonomous");
-    // });
+    //     controller.set_text(0, 0, "Routine: right auton");
+    // }
 }
 
 void disabled() {}
@@ -177,11 +203,11 @@ void opcontrol()
         // Driver control routine
         if (routine == 0) { routine_driver_control(); }
 
-        // // Left side autonomous routine
-        // else if (routine == 1) { routine_auton_left(); }
+        // Left side autonomous routine
+        else if (routine == 1) { routine_auton_left(); }
 
-        // // Right side autonomous routine
-        // else if (routine == 2) { routine_auton_right(); }
+        // Right side autonomous routine
+        else if (routine == 2) { routine_auton_right(); }
         
         // // Run the debugger on the Brain screen.
         // debug();
