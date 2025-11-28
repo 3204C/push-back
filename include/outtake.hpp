@@ -27,4 +27,12 @@ void outtake_spin(int is_outward, int is_inward, int voltage);
  */
 void outtake_spin(int is_outward, int is_inward, int voltage, int duration);
 
+/**
+ * Lifts the outtake using pneumatics in a specified direction.
+ * 
+ * @param is_upward Returns 1 if the upward button is pressed and 0 if not.
+ * @param is_downward Returns 1 if the downward button is pressed and 0 if not.
+ */
+void outtake_lift(int is_upward, int is_downward);
+
 #endif

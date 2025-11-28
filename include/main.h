@@ -49,7 +49,7 @@ extern "C" {
  * Displays a debugger on the Brain screen which shows the values given by the 
  * GPS, Inertial and Optical Sensors.
  */
-void debug(void);
+// void debug(void);
 
 /**
  * Performs the autonomous routine on the left side of the field.

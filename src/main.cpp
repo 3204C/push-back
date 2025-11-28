@@ -14,12 +14,12 @@
 /// The number of the routine the robot is set to perform.
 int routine;
 
-void debug()
-{
-    pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps.get_position_x()));
-    pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps.get_position_y()));
-    pros::lcd::set_text(7, std::format("Heading: {:.2f}", gps.get_heading()));
-}
+// void debug()
+// {
+//     pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps.get_position_x()));
+//     pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps.get_position_y()));
+//     pros::lcd::set_text(7, std::format("Heading: {:.2f}", gps.get_heading()));
+// }
 
 void routine_auton_left()
 {
@@ -64,7 +64,7 @@ void routine_driver_control()
 {
     // Control the drivetrain using voltage from the joysticks. The left joystick
     // controls the left side, and the right joystick controls the right side.
-    if (controller.get_digital(DIGITAL_DOWN))
+    if (controller.get_digital(DIGITAL_A))
     {
         dt_move_voltage(controller.get_analog(ANALOG_RIGHT_Y) * -1,
             controller.get_analog(ANALOG_LEFT_Y) * -1, 4, 127);
@@ -92,6 +92,12 @@ void routine_driver_control()
     // make the outtake spin.
     outtake_spin(controller.get_digital(DIGITAL_L1),
         controller.get_digital(DIGITAL_L2), 31);
+
+    // Lift the outtake using the controller. Pressing the up arrow lifts the outtake
+    // upward, and pressing the down arrow lifts the outtake downward. Pressing both
+    // or neither will not make the outtake lift.
+    outtake_lift(controller.get_digital(DIGITAL_UP),
+        controller.get_digital(DIGITAL_DOWN));
 }
 
 void initialize()
@@ -128,7 +134,7 @@ void initialize()
 	outtake.set_encoder_units_all(MOTOR_ENCODER_ROTATIONS);
 	outtake.tare_position_all();
 
-        // Set up the routine selection.
+    // Set up the routine selection.
     routine = 0;
     pros::lcd::set_text(1, "Routine: none/driver control");
     controller.set_text(0, 0, "Routine: none/driver");
@@ -203,8 +209,8 @@ void opcontrol()
         // Driver control routine
         if (routine == 0) { routine_driver_control(); }
 
-        // Left side autonomous routine
-        else if (routine == 1) { routine_auton_left(); }
+        // // Left side autonomous routine
+        // else if (routine == 1) { routine_auton_left(); }
 
         // Right side autonomous routine
         else if (routine == 2) { routine_auton_right(); }

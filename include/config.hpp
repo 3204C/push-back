@@ -8,31 +8,34 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-/// The main controller used for the robot.
+/// @brief The main controller used for the robot.
 extern pros::Controller controller;
 
-/// The motors on the left side of the drivetrain.
+/// @brief The motors on the left side of the drivetrain.
 extern pros::MotorGroup dt_left;
 
-/// The motors on the right side of the drivetrain.
+/// @brief The motors on the right side of the drivetrain.
 extern pros::MotorGroup dt_right;
 
-/// The intake motors.
+/// @brief The intake motors.
 extern pros::MotorGroup intake;
 
-/// The conveyor belt motor.
+/// @brief The conveyor belt motor.
 extern pros::Motor conveyor;
 
-/// The outtake motor.
+/// @brief The outtake motor.
 extern pros::Motor outtake;
 
-/// The GPS Sensor.
-extern pros::Gps gps;
+/// @brief The pneumatics for the outtake.
+extern pros::ADIDigitalOut pneumatics;
 
-/// The Optical Sensor.
+/// @brief The GPS Sensor.
+// extern pros::Gps gps;
+
+/// @brief The Optical Sensor.
 // extern pros::Optical optical;
 
-/// The Inertial Sensor.
+/// @brief The Inertial Sensor.
 // extern pros::Imu inertial;
 
 #endif
