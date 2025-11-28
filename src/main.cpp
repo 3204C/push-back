@@ -29,6 +29,9 @@ void routine_auton_left()
 
 void routine_auton_right()
 {
+    // Set the outtake pneumatics to the upward position.
+    pneumatics.set_value(0);
+
     // Spin the intake inwards to pick up blocks.
     intake_spin(1, 0, 127);
 
@@ -176,7 +179,7 @@ void initialize()
     //     controller.set_text(0, 0, "Routine: left auton");
     // }
 
-    // else if (controller.get_digital(DIGITAL_A))
+    // else if (controller.get_digital(DIGITAL_B))
     // {
     //     routine = 2;
     //     pros::lcd::set_text(1, "Routine: right side autonomous");
