@@ -92,8 +92,11 @@ void routine_auton_right()
     // Spin the intake outwards to let go of the block.
     intake_spin(0, 1, 127, 2000);
 
+    // Move away from the centre goal.
+    dt_move_straight(-5.0, 1500, true);
+
     // Move towards the centre goal.
-    dt_move_straight(3.0, 1000, true);
+    dt_move_straight(8.0, 1000, true);
 
     // Set the routine to driver control after finishing.
     routine = 0;
