@@ -133,7 +133,7 @@ void routine_driver_control()
     // and pressing R2 spins the outtake inward. Pressing both or neither will not
     // make the outtake spin.
     outtake_spin(controller.get_digital(DIGITAL_L1),
-        controller.get_digital(DIGITAL_L2), 31);
+        controller.get_digital(DIGITAL_L2), 127);
 
     // Lift the outtake using the controller. Pressing the up arrow lifts the outtake
     // upward, and pressing the down arrow lifts the outtake downward. Pressing both

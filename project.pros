@@ -593,8 +593,8 @@
     },
     "upload_options": {
       "description": "3204C's code for Push Back.",
-      "icon": "pizza",
-      "slot": 1
+      "icon": "planet",
+      "slot": 3
     },
     "use_early_access": false
   }
