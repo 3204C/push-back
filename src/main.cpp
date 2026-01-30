@@ -98,6 +98,9 @@ void routine_auton_right()
     // Move towards the centre goal.
     dt_move_straight(8.0, 1000, true);
 
+    // Move away from the centre goal.
+    dt_move_straight(-8.0, 1500, true);
+
     // Set the routine to driver control after finishing.
     routine = 0;
 }
