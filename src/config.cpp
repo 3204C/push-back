@@ -22,8 +22,7 @@ pros::Motor outtake(-7);
 
 pros::ADIDigitalOut pneumatics('F');
 
-// TODO: Change offset placeholders
-pros::Gps gps(19, 0.0, 0.0);
+pros::Gps gps(20, -0.125, -0.17);
 
 pros::Optical optical(18);
 

@@ -11,15 +11,53 @@
 #include "conveyor.hpp"
 #include "outtake.hpp"
 
+/// Set the routine to driver control after finishing.
+int direction = 1;
+
 /// The number of the routine the robot is set to perform.
 int routine;
 
-// void debug()
-// {
-//     pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps.get_position_x()));
-//     pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps.get_position_y()));
-//     pros::lcd::set_text(7, std::format("Heading: {:.2f}", gps.get_heading()));
-// }
+/// Sensor smoothing variable (0-1).
+#define SMOOTHING_GPS_POS 0.4
+#define SMOOTHING_GPS_HEADING 0.4
+#define SMOOTHING_INERTIAL_HEADING 0.4
+
+/// Location variables.
+double gps_pos_x;
+double gps_pos_y;
+double gps_heading;
+double inertial_heading;
+
+void sensors() 
+{
+    // Smooths raw sensor data.
+    gps_pos_x = (SMOOTHING_GPS_POS * gps.get_position_x()) + ((1 - SMOOTHING_GPS_POS) * gps_pos_x);
+    gps_pos_y = (SMOOTHING_GPS_POS * gps.get_position_y()) + ((1 - SMOOTHING_GPS_POS) * gps_pos_y);
+    gps_heading = (SMOOTHING_GPS_HEADING * gps.get_heading()) + ((1 - SMOOTHING_GPS_HEADING) * gps_heading);
+    inertial_heading = (SMOOTHING_INERTIAL_HEADING * inertial.get_heading()) + ((1 - SMOOTHING_INERTIAL_HEADING) * inertial_heading);
+
+    // Prevent Out of bound numbers
+    if (inertial_heading > 359 or inertial_heading < 0) { inertial_heading = 0; }
+}
+
+void debug()
+{
+    // Writes debug info to screen.
+    pros::lcd::set_text(5, std::format("X-position: {:.2f}", gps_pos_x));
+    pros::lcd::set_text(6, std::format("Y-position: {:.2f}", gps_pos_y));
+    pros::lcd::set_text(7, std::format("Heading: {:.2f}", inertial_heading));
+}
+
+void background_task_fn()
+{
+    while (true)
+    {
+        sensors();
+        debug();
+
+        pros::delay(100);
+    }
+}
 
 void routine_auton_left()
 {
@@ -106,18 +144,30 @@ void routine_auton_right()
 }
 
 void routine_driver_control()
-{
+{  
     // Control the drivetrain using voltage from the joysticks. The left joystick
     // controls the left side, and the right joystick controls the right side.
-    if (controller.get_digital(DIGITAL_B))
+    if (direction == 0)
     {
         dt_move_voltage(controller.get_analog(ANALOG_RIGHT_Y) * -1,
             controller.get_analog(ANALOG_LEFT_Y) * -1, 4, 127);
+
+        // Changes drivetrain direction in driver control.
+        if (controller.get_digital_new_press(DIGITAL_A) == 1) {
+            direction = 1;
+            controller.set_text(0, 0, "Front: Intake");
+        }
     }
     else
     {
         dt_move_voltage(controller.get_analog(ANALOG_LEFT_Y),
             controller.get_analog(ANALOG_RIGHT_Y), 4, 127);
+
+        // Changes drivetrain direction in driver control.
+        if (controller.get_digital_new_press(DIGITAL_A) == 1) {
+            direction = 0;
+            controller.set_text(0, 0, "Front: Outake");
+        }
     }
     
     // Spin the intake using the controller. Pressing L1 spins the intake inward,
@@ -179,15 +229,31 @@ void initialize()
 	outtake.set_encoder_units_all(MOTOR_ENCODER_ROTATIONS);
 	outtake.tare_position_all();
 
+    // set the inertial sensor to gps heading
+    inertial.set_heading(gps.get_heading());
+    
+    // Set Smoothed values to raw values
+    gps_pos_x = gps.get_position_x();
+    gps_pos_y = gps.get_position_y();
+    gps_heading = gps.get_heading();
+    inertial_heading = inertial.get_heading();
+    
+    // Starts main background task.
+    pros::Task background_task(background_task_fn, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "background_task");
+
+    // Waits for gps value to settle, then set the inertial sensor to gps heading.
+    pros::delay(500);
+    inertial.set_heading(gps_heading);
+    
     // Set up the routine selection.
-    routine = 0;
-    pros::lcd::set_text(1, "Routine: none/driver control");
-    controller.set_text(0, 0, "Routine: none/driver");
+    routine = 4;
+    pros::lcd::set_text(1, "Routine: auto");
+    controller.set_text(0, 0, "Routine: auto");
 
     // Routine selection with brain buttons
     pros::lcd::register_btn0_cb([]()
     {
-        routine = 0;
+        routine = 3;
         pros::lcd::set_text(1, "Routine: none/driver control");
         controller.set_text(0, 0, "Routine: none/driver");
     });
@@ -220,44 +286,31 @@ void autonomous()
 
     // Right side autonomous routine
     else if (routine == 2) { routine_auton_right(); }
+
+    // Skip autonomous routine
+    else if (routine == 0) { pros::lcd::set_text(0, "Autonomous skipped"); }
+
+    // Automatic autonomous slection
+    else
+    {
+        // Left side autonomous routine
+        if (gps_pos_x > 0 and gps_pos_y < 0 or gps_pos_x < 0 and gps_pos_y > 0) { routine_auton_left(); }
+
+        // Right side autonomous routine
+        if (gps_pos_x > 0 and gps_pos_y > 0 or gps_pos_x < 0 and gps_pos_y < 0) { routine_auton_right(); }
+    }
 }
 
 void opcontrol()
 {
     pros::lcd::set_text(0, "Starting driver control...");
+    controller.set_text(0, 0, "Front: Outake");
 
     // Repeat until driver control is over.
 	while (true)
 	{        
         // Driver control routine
-        if (routine == 0)
-        {
-            routine_driver_control();
-
-            // Routine selection with controller buttons
-            if (controller.get_digital(DIGITAL_Y))
-            {
-                pros::lcd::set_text(1, "Routine: left side autonomous");
-                controller.set_text(0, 0, "Routine: left auton");
-                routine = 1;
-            }
-
-            if (controller.get_digital(DIGITAL_A))
-            {
-                pros::lcd::set_text(1, "Routine: right side autonomous");
-                controller.set_text(0, 0, "Routine: right auton");
-                routine = 2;
-            }
-        }
-
-        // Left side autonomous routine
-        else if (routine == 1) { routine_auton_left(); }
-
-        // Right side autonomous routine
-        else if (routine == 2) { routine_auton_right(); }
-        
-        // Run the debugger on the Brain screen.
-        // debug();
+        routine_driver_control();
 
         pros::delay(100);
 	}

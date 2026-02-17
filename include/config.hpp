@@ -30,12 +30,12 @@ extern pros::Motor outtake;
 extern pros::ADIDigitalOut pneumatics;
 
 /// @brief The GPS Sensor.
-// extern pros::Gps gps;
+extern pros::Gps gps;
 
 /// @brief The Optical Sensor.
-// extern pros::Optical optical;
+extern pros::Optical optical;
 
 /// @brief The Inertial Sensor.
-// extern pros::Imu inertial;
+extern pros::Imu inertial;
 
 #endif

@@ -46,10 +46,20 @@ extern "C" {
 #endif
 
 /**
+ * Smooths raw sensor values.
+ */
+void sensors(void);
+
+/**
  * Displays a debugger on the Brain screen which shows the values given by the 
  * GPS, Inertial and Optical Sensors.
  */
-// void debug(void);
+void debug(void);
+
+/**
+ * Loop that runs everything that needs to be running indefinilty
+ */
+void background_task_fn(void);
 
 /**
  * Performs the autonomous routine on the left side of the field.
