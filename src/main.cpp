@@ -155,6 +155,9 @@ void routine_auton_right()
     // Move away from the centre goal.
     dt_move_straight(-8.0, 1500, true);
 
+    // Move away from the centre goal.
+    dt_move_straight(-8.0, 1500, true);
+
     // Set the routine to driver control after finishing.
     pros::lcd::set_text(1, "Routine: none/driver control");
     controller.set_text(0, 0, "Routine: none/driver");
@@ -164,9 +167,10 @@ void routine_auton_right()
 void routine_auton_skills() {}
 
 void routine_driver_control()
-{
+{  
     // Control the drivetrain using voltage from the joysticks. The left joystick
     // controls the left side, and the right joystick controls the right side.
+    if (direction == 0)
     if (direction == 0)
     {
         dt_move_voltage(controller.get_analog(ANALOG_RIGHT_Y) * -1,
@@ -206,6 +210,7 @@ void routine_driver_control()
     // and pressing R2 spins the outtake inward. Pressing both or neither will not
     // make the outtake spin.
     outtake_spin(controller.get_digital(DIGITAL_L1),
+        controller.get_digital(DIGITAL_L2), 127);
         controller.get_digital(DIGITAL_L2), 127);
 
     // Lift the outtake using the controller. Pressing the up arrow lifts the outtake

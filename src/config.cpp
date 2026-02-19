@@ -24,8 +24,6 @@ pros::ADIDigitalOut pneumatics('F');
 
 pros::Gps gps(12, 0.127, 0.3048, 0.0);
 
-// TODO: Change port number placeholder
 pros::Optical optical(18);
 
-// TODO: Change port number placeholder
 pros::Imu inertial(11);

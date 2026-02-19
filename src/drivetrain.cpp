@@ -31,13 +31,24 @@ double distance_to_point(double cur_x, double cur_y, double x, double y)
     // Calculate the x and y component distances.
     double delta_x = x - cur_x;
     double delta_y = y - cur_y;
+double distance_to_point(double cur_x, double cur_y, double x, double y)
+{
+    // Calculate the x and y component distances.
+    double delta_x = x - cur_x;
+    double delta_y = y - cur_y;
 
+    // Calculate the absolute distance using the Pythagorean theorem.
+    double distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
     // Calculate the absolute distance using the Pythagorean theorem.
     double distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
     // Convert the distance from metres to inches.
     distance *= 39.37;
+    // Convert the distance from metres to inches.
+    distance *= 39.37;
 
+    return distance;
+}
     return distance;
 }
 
@@ -46,7 +57,14 @@ double heading_from_robot(double cur_x, double cur_y, double x, double y)
     // Calculate the x and y component distances.
     double delta_x = x - cur_x;
     double delta_y = y - cur_y;
+double heading_from_robot(double cur_x, double cur_y, double x, double y)
+{
+    // Calculate the x and y component distances.
+    double delta_x = x - cur_x;
+    double delta_y = y - cur_y;
 
+    // Calculate the angle using the arctangent function.
+    double heading = std::atan2(delta_y, delta_x);
     // Calculate the angle using the arctangent function.
     double heading = std::atan2(delta_y, delta_x);
 
@@ -55,17 +73,29 @@ double heading_from_robot(double cur_x, double cur_y, double x, double y)
 
     // If the angle is negative, add 360 degrees to turn it positive.
     if (heading < 0) { heading += 360; }
+    // If the angle is negative, add 360 degrees to turn it positive.
+    if (heading < 0) { heading += 360; }
 
     // Turn the angle into a heading.
     heading = 90 - heading;
+    // Turn the angle into a heading.
+    heading = 90 - heading;
 
+    return heading;
+}
     return heading;
 }
 
 double angle_from_robot(double cur_x, double cur_y, double cur_heading, double x, double y)
 {
     double heading = heading_from_robot(cur_x, cur_y, x, y);
+double angle_from_robot(double cur_x, double cur_y, double cur_heading, double x, double y)
+{
+    double heading = heading_from_robot(cur_x, cur_y, x, y);
 
+    // Calculate the two possible angles the robot can turn to face the point.
+    double angle_1 = heading - cur_heading;
+    double angle_2 = 360 - angle_1;
     // Calculate the two possible angles the robot can turn to face the point.
     double angle_1 = heading - cur_heading;
     double angle_2 = 360 - angle_1;
@@ -177,6 +207,9 @@ void dt_turn(double cur_x, double cur_y, double cur_heading, double x,
     // Turn towards the point.
     dt_turn(angle, duration, is_blocking);
 }
+    // Turn towards the point.
+    dt_turn(angle, duration, is_blocking);
+}
 
 void dt_move_straight(double distance, int duration, bool is_blocking)
 {
@@ -224,10 +257,17 @@ void dt_move_straight(double cur_x, double cur_y, double cur_heading, double x,
 
     // Reduce the travel distance so the robot stops at a given end distance.
     distance -= end_distance;
+    // Reduce the travel distance so the robot stops at a given end distance.
+    distance -= end_distance;
 
     // Turn towards the point.
     dt_turn(cur_x, cur_y, cur_heading, x, y, turn_duration, true);
+    // Turn towards the point.
+    dt_turn(cur_x, cur_y, cur_heading, x, y, turn_duration, true);
 
+    // Move towards the point.
+    dt_move_straight(distance, move_duration, is_blocking);
+}
     // Move towards the point.
     dt_move_straight(distance, move_duration, is_blocking);
 }

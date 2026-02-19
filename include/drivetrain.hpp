@@ -17,6 +17,7 @@
  * @returns The distance between the robot and the point (x, y) (in inches).
  */
 double distance_to_point(double cur_x, double cur_y, double x, double y);
+double distance_to_point(double cur_x, double cur_y, double x, double y);
 
 /**
  * Returns the heading of a point (x, y) from the robot's position (in degrees).
@@ -25,6 +26,7 @@ double distance_to_point(double cur_x, double cur_y, double x, double y);
  * @param x, y The coordinates of the point.
  * @returns The heading of the point (x, y) from the robot's position.
  */
+double heading_from_robot(double cur_x, double cur_y, double x, double y);
 double heading_from_robot(double cur_x, double cur_y, double x, double y);
 
 /**
@@ -37,6 +39,7 @@ double heading_from_robot(double cur_x, double cur_y, double x, double y);
  * @returns The smallest angle that the robot can turn to face the point (x, y)
  *          (in degrees).
  */
+double angle_from_robot(double cur_x, double cur_y, double cur_heading, double x, double y);
 double angle_from_robot(double cur_x, double cur_y, double cur_heading, double x, double y);
 
 /**
