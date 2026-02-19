@@ -22,11 +22,10 @@ pros::Motor outtake(-7);
 
 pros::ADIDigitalOut pneumatics('F');
 
-// TODO: Change port number and offset placeholders
-// pros::Gps gps(18, 0.0, 0.0);
+pros::Gps gps(12, 0.127, 0.3048, 0.0);
 
 // TODO: Change port number placeholder
-// pros::Optical optical();
+pros::Optical optical(18);
 
 // TODO: Change port number placeholder
-// pros::Imu inertial();
+pros::Imu inertial(11);
