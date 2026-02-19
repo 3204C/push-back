@@ -46,23 +46,48 @@ extern "C" {
 #endif
 
 /**
+ * Smooths raw values of the GPS and inertial sensors.
+ */
+void sensors(void);
+
+/**
  * Displays a debugger on the Brain screen which shows the values given by the 
  * GPS, Inertial and Optical Sensors.
  */
-// void debug(void);
+void debug(void);
 
 /**
- * Performs the autonomous routine on the left side of the field.
+ * Task loop that runs necessary functions indefinitely.
+ */
+void background_task_fn(void);
+
+/**
+ * Performs an autonomous routine for testing purposes. This routine is
+ * assigned the number 99. 
+ */
+void routine_auton_test(void);
+
+/**
+ * Performs the autonomous routine on the left side of the field. This routine
+ * is assigned the number 1 (if selected using the Brain screen).
  */
 void routine_auton_left(void);
 
 /**
- * Performs the autonomous routine on the right side of the field.
+ * Performs the autonomous routine on the right side of the field. This routine
+ * is assigned the number 2 (if selected using the Brain screen).
  */
 void routine_auton_right(void);
 
 /**
- * Performs the driver control routine.
+ * Performs the Autonomous Skills routine. This routine is assigned the number
+ * 10.
+ */
+void routine_auton_skills(void);
+
+/**
+ * Performs the driver control routine. This routine is assigned the numbers 0
+ * and 3.
  */
 void routine_driver_control(void);
 

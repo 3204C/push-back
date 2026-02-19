@@ -12,28 +12,32 @@
 /**
  * Returns the distance between the robot and a given point (x, y) (in inches).
  * 
+ * @param cur_x, cur_y The coordinates of the robot's current location.
  * @param x, y The coordinates of the point.
  * @returns The distance between the robot and the point (x, y) (in inches).
  */
-// double distance_to_point(double x, double y);
+double distance_to_point(double cur_x, double cur_y, double x, double y);
 
 /**
  * Returns the heading of a point (x, y) from the robot's position (in degrees).
  * 
+ * @param cur_x, cur_y The coordinates of the robot's current location.
  * @param x, y The coordinates of the point.
  * @returns The heading of the point (x, y) from the robot's position.
  */
-// double heading_from_robot(double x, double y);
+double heading_from_robot(double cur_x, double cur_y, double x, double y);
 
 /**
  * Returns the smallest angle that the robot can turn to face a point (x, y)
  * (in degrees).
  * 
+ * @param cur_x, cur_y The coordinates of the robot's current location.
+ * @param cur_heading The robot's current heading.
  * @param x, y The coordinates of the point.
  * @returns The smallest angle that the robot can turn to face the point (x, y)
  *          (in degrees).
  */
-// double angle_from_robot(double x, double y);
+double angle_from_robot(double cur_x, double cur_y, double cur_heading, double x, double y);
 
 /**
  * Controls the drivetrain motors using voltage. Used for driver control.
@@ -77,12 +81,15 @@ void dt_turn(double angle, int duration, bool is_blocking);
 /**
  * Turns the drivetrain towards a point (x, y) for a duration of time.
  * 
+ * @param cur_x, cur_y The coordinates of the robot's current location.
+ * @param cur_heading The robot's current heading.
  * @param x, y The coordinates of the point.
  * @param duration The time it takes for the robot to turn (in ms).
  * @param is_blocking Determines whether the command will block subsequent
  *                    commands or allow immediate execution.
  */
-// void dt_turn(double x, double y, int duration, bool is_blocking);
+void dt_turn(double cur_x, double cur_y, double cur_heading, double x,
+    double y, int duration, bool is_blocking);
 
 /**
  * Moves the drivetrain in a straight line for a given distance and duration of
@@ -99,6 +106,8 @@ void dt_move_straight(double distance, int duration, bool is_blocking);
  * Moves the drivetrain towards a point (x, y) for a duration of time.
  * The robot stops at the closest distance given.
  * 
+ * @param cur_x, cur_y The coordinates of the robot's current location.
+ * @param cur_heading The robot's current heading.
  * @param x, y The coordinates of the point.
  * @param turn_duration The time it takes for the robot to turn (in ms).
  * @param move_duration The time it takes for the robot to move (in ms).
@@ -107,7 +116,8 @@ void dt_move_straight(double distance, int duration, bool is_blocking);
  * @param is_blocking Determines whether the command will block subsequent
  *                    commands or allow immediate execution.
  */
-// void dt_move_straight(double x, double y, int turn_duration, int move_duration,
-//     double end_distance, bool is_blocking);
+void dt_move_straight(double cur_x, double cur_y, double cur_heading, double x,
+    double y, int turn_duration, int move_duration, double end_distance,
+    bool is_blocking);
 
 #endif
