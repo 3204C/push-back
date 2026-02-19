@@ -15,6 +15,7 @@
 #define SMOOTHING_GPS_POS 0.4
 #define SMOOTHING_GPS_HEADING 0.4
 #define SMOOTHING_INERTIAL_HEADING 0.4
+#define SMOOTHING_OPTICAL_HUE 0.4
 
 /// The direction of the robot's front face.
 int direction = 1;
@@ -27,6 +28,7 @@ double gps_pos_x;
 double gps_pos_y;
 double gps_heading;
 double inertial_heading;
+double optical_hue;
 
 void sensors() 
 {
@@ -35,6 +37,7 @@ void sensors()
     gps_pos_y = (SMOOTHING_GPS_POS * gps.get_position_y()) + ((1 - SMOOTHING_GPS_POS) * gps_pos_y);
     gps_heading = (SMOOTHING_GPS_HEADING * gps.get_heading()) + ((1 - SMOOTHING_GPS_HEADING) * gps_heading);
     inertial_heading = (SMOOTHING_INERTIAL_HEADING * inertial.get_heading()) + ((1 - SMOOTHING_INERTIAL_HEADING) * inertial_heading);
+    optical_hue = (SMOOTHING_OPTICAL_HUE * optical.get_hue()) + ((1 - SMOOTHING_OPTICAL_HUE) * optical_hue);
 
     // Prevent out of bound heading values.
     if (inertial_heading >= 360.0 || inertial_heading < 0.0) { inertial_heading = 0.0; }
@@ -45,7 +48,7 @@ void debug()
     pros::lcd::set_text(4, std::format("X-position: {:.2f}", gps_pos_x));
     pros::lcd::set_text(5, std::format("Y-position: {:.2f}", gps_pos_y));
     pros::lcd::set_text(6, std::format("Heading: {:.2f} (GPS), {:.2f} (IMU)", gps_heading, inertial_heading));
-    pros::lcd::set_text(7, std::format("Hue: {}", optical.get_hue()));
+    pros::lcd::set_text(7, std::format("Hue: {}", optical_hue));
 }
 
 void background_task_fn()
@@ -171,7 +174,6 @@ void routine_driver_control()
     // Control the drivetrain using voltage from the joysticks. The left joystick
     // controls the left side, and the right joystick controls the right side.
     if (direction == 0)
-    if (direction == 0)
     {
         dt_move_voltage(controller.get_analog(ANALOG_RIGHT_Y) * -1,
             controller.get_analog(ANALOG_LEFT_Y) * -1, 4, 127);
@@ -210,7 +212,6 @@ void routine_driver_control()
     // and pressing R2 spins the outtake inward. Pressing both or neither will not
     // make the outtake spin.
     outtake_spin(controller.get_digital(DIGITAL_L1),
-        controller.get_digital(DIGITAL_L2), 127);
         controller.get_digital(DIGITAL_L2), 127);
 
     // Lift the outtake using the controller. Pressing the up arrow lifts the outtake
@@ -262,6 +263,7 @@ void initialize()
     gps_pos_y = gps.get_position_y();
     gps_heading = gps.get_heading();
     inertial_heading = inertial.get_heading();
+    optical_hue = optical.get_hue();
     
     // Start the main background task.
     pros::Task background_task(background_task_fn, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "background_task");
