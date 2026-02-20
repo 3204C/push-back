@@ -62,7 +62,8 @@ double heading_from_robot(double cur_x, double cur_y, double x, double y)
     return heading;
 }
 
-double angle_from_robot(double cur_x, double cur_y, double cur_heading, double x, double y)
+double angle_from_robot(double cur_x, double cur_y, double cur_heading,
+    double x, double y)
 {
     double heading = heading_from_robot(cur_x, cur_y, x, y);
 
