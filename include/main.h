@@ -86,8 +86,7 @@ void routine_auton_right(void);
 void routine_auton_skills(void);
 
 /**
- * Performs the driver control routine. This routine is assigned the numbers 0
- * and 3.
+ * Performs the driver control routine. This routine is assigned the number 0.
  */
 void routine_driver_control(void);
 

@@ -20,9 +20,6 @@ extern pros::MotorGroup dt_right;
 /// @brief The intake motors.
 extern pros::MotorGroup intake;
 
-/// @brief The conveyor belt motor.
-extern pros::Motor conveyor;
-
 /// @brief The outtake motor.
 extern pros::Motor outtake;
 

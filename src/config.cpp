@@ -14,9 +14,7 @@ pros::MotorGroup dt_left({3, -2, 1});
 
 pros::MotorGroup dt_right({-6, 5, -4});
 
-pros::MotorGroup intake({10, -21});
-
-pros::Motor conveyor(-9);
+pros::MotorGroup intake({10, -21, -9});
 
 pros::Motor outtake(-7);
 

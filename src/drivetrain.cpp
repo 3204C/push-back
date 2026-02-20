@@ -142,7 +142,7 @@ void dt_turn(double angle, int duration, bool is_blocking)
     double turning_radius = TRACK_WIDTH / 2;
     double turning_circumference = turning_radius * 2 * PI;
     double distance = turning_circumference * angle / 360;
-    double revolutions = distance / WHEEL_CIRCUMFERENCE;
+    double revolutions = distance / WHEEL_CIRCUMFERENCE * 1.06;
 
     /**
      * Calculate the angular velocity of each motor.
@@ -189,7 +189,7 @@ void dt_move_straight(double distance, int duration, bool is_blocking)
      * 
      * revolutions = d / c
      */
-    double revolutions = distance / WHEEL_CIRCUMFERENCE;
+    double revolutions = distance / WHEEL_CIRCUMFERENCE * 0.92;
     
     /**
      * Calculate the angular velocity of each motor.

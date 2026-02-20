@@ -8,7 +8,6 @@
 #include "main.h"
 #include "drivetrain.hpp"
 #include "intake.hpp"
-#include "conveyor.hpp"
 #include "outtake.hpp"
 
 // Sensor smoothing variables (0-1).
@@ -48,7 +47,7 @@ void debug()
     pros::lcd::set_text(4, std::format("X-position: {:.2f}", gps_pos_x));
     pros::lcd::set_text(5, std::format("Y-position: {:.2f}", gps_pos_y));
     pros::lcd::set_text(6, std::format("Heading: {:.2f} (GPS), {:.2f} (IMU)", gps_heading, inertial_heading));
-    pros::lcd::set_text(7, std::format("Hue: {}", optical_hue));
+    pros::lcd::set_text(7, std::format("Hue: {:.2f}", optical_hue));
 }
 
 void background_task_fn()
@@ -64,106 +63,135 @@ void background_task_fn()
 
 void routine_auton_test()
 {
-    dt_turn(360.0, 2000, true);
-    dt_move_straight(12.0, 1500, true);
+    dt_move_straight(24.0, 2000, true);
+    pros::delay(500);
+    dt_move_straight(-12.0, 1500, true);
+    pros::delay(500);
+    dt_move_straight(-12.0, 750, true);
+    pros::delay(500);
+    dt_move_straight(48.0, 2000, true);
+    pros::delay(500);
     
     // Set the routine to driver control after finishing.
-    pros::lcd::set_text(1, "Routine: none/driver control");
-    controller.set_text(0, 0, "Routine: none/driver");
+    pros::lcd::set_text(0, "Autonomous finished.");
+
     routine = 0;
 }
 
 void routine_auton_left()
 {
-    // Set the outtake pneumatics to the upward position.
-    outtake_lift(1, 0);
+    // Lift the outtake downwards.
+    outtake_lift(0, 1);
 
     // Spin the intake inwards to pick up blocks.
     intake_spin(1, 0, 127);
 
     // Move towards the centre blocks.
-    dt_move_straight(42.0, 2500, true);
+    dt_move_straight(45.0, 1500, true);
 
     // Stop the intake.
-    intake_spin(0, 0, 127);
+    intake_spin(0, 0, 0);
 
     // Turn towards the centre goal.
-    dt_turn(45.0, 1000, true);
+    dt_turn(-150.0, 500, true);
 
     // Move towards the centre goal.
-    dt_move_straight(6.0, 1000, true);
+    dt_move_straight(-5.5, 500, true);
 
-    // Set the outtake pneumatics to the downward position.
-    outtake_lift(0, 1);
+    // Spin the intake and outtake outwards for 2 seconds to let go of the blocks.
+    intake_spin(1, 0, 127);
+    outtake_spin(1, 0, 127);
+    pros::delay(2000);
 
-    // Wait for 0.5 seconds to ensure the pneumatics have fully lowered.
-    pros::delay(500);
-
-    // Spin the outtake outwards to let go of the block.
-    outtake_spin(1, 0, 127, 1000);
-
-    // Spin the conveyor upwards.
-    conveyor_spin(1, 0, 127, 2000);
-
-    // Spin the outtake outwards to let go of the block.
-    outtake_spin(1, 0, 127, 2000);
-
-    // Move towards the centre goal.
-    dt_move_straight(3.0, 1000, true);
+    // Stop the intake.
+    intake_spin(0, 0, 0);
+    outtake_spin(0, 0, 0);
 
     // Move away from the centre goal.
-    dt_move_straight(-8.0, 1500, true);
+    dt_move_straight(42.0, 1500, true);
+
+    // Turn towards the loading zone.
+    dt_turn(-50.0, 1500, true);
+
+    // Move towards the loading zone.
+    dt_move_straight(20.0, 800, true);
+
+    // Spin the intake inwards for 2 seconds to pick up blocks.
+    intake_spin(1, 0, 127);
+    pros::delay(2000);
+
+    // Lift the outtake upwards.
+    outtake_lift(1, 0);
+
+    // Move towards the long goal.
+    dt_move_straight(-40.0, 1500, true);
+
+    // Spin the outtake outwards to release the blocks.
+    outtake_spin(1, 0, 3000);
+
+    // Stop the intake and outtake.
+    intake_spin(0, 0, 0);
+    outtake_spin(0, 0, 0);
 
     // Set the routine to driver control after finishing.
-    pros::lcd::set_text(1, "Routine: none/driver control");
-    controller.set_text(0, 0, "Routine: none/driver");
+    pros::lcd::set_text(0, "Autonomous finished.");
+
     routine = 0;
 }
 
 void routine_auton_right()
 {
-    // Set the outtake pneumatics to the upward position.
-    outtake_lift(1, 0);
-
     // Spin the intake inwards to pick up blocks.
     intake_spin(1, 0, 127);
 
     // Move towards the centre blocks.
-    dt_move_straight(42.0, 2000, true);
+    dt_move_straight(45.0, 1500, true);
 
     // Stop the intake.
     intake_spin(0, 0, 0);
 
     // Turn towards the centre goal.
-    dt_turn(-45.0, 500, true);
+    dt_turn(-50.0, 500, true);
 
     // Move towards the centre goal.
-    dt_move_straight(5.5, 1000, true);
+    dt_move_straight(5.5, 500, true);
 
-    // Spin the intake outwards to let go of the first block.
+    // Spin the intake outwards for 2 seconds to let go of the blocks.
     intake_spin(0, 1, 127);
-
-    // Spin the conveyor downwards.
-    conveyor_spin(0, 1, 127, 2000);
+    pros::delay(2000);
 
     // Stop the intake.
     intake_spin(0, 0, 0);
 
     // Move away from the centre goal.
-    dt_move_straight(-5.0, 1500, true);
+    dt_move_straight(-42.0, 1500, true);
 
-    // Move towards the centre goal.
-    dt_move_straight(8.0, 1000, true);
+    // Turn towards the loading zone.
+    dt_turn(-150.0, 1500, true);
 
-    // Move away from the centre goal.
-    dt_move_straight(-8.0, 1500, true);
+    // Move towards the loading zone.
+    dt_move_straight(20.0, 800, true);
 
-    // Move away from the centre goal.
-    dt_move_straight(-8.0, 1500, true);
+    // Spin the intake inwards for 2 seconds to pick up blocks.
+    intake_spin(1, 0, 127);
+    pros::delay(2000);
+
+    // Lift the outtake upwards.
+    outtake_lift(1, 0);
+
+    // Move towards the long goal.
+    dt_move_straight(-40.0, 1500, true);
+
+    // Spin the outtake outwards to release the blocks.
+    outtake_spin(1, 0, 3000);
+
+    // Stop the intake and outtake.
+    intake_spin(0, 0, 0);
+    outtake_spin(0, 0, 0);
 
     // Set the routine to driver control after finishing.
-    pros::lcd::set_text(1, "Routine: none/driver control");
-    controller.set_text(0, 0, "Routine: none/driver");
+    pros::lcd::set_text(0, "Autonomous finished.");
+
     routine = 0;
 }
 
@@ -181,7 +209,8 @@ void routine_driver_control()
         // Changes drivetrain direction in driver control.
         if (controller.get_digital(DIGITAL_A)) {
             direction = 1;
-            controller.set_text(0, 0, "Front: intake");
+            
+            controller.set_text(0, 0, "Front: intake          ");
         }
     }
     else
@@ -192,7 +221,8 @@ void routine_driver_control()
         // Changes drivetrain direction in driver control.
         if (controller.get_digital(DIGITAL_A)) {
             direction = 0;
-            controller.set_text(0, 0, "Front: outtake");
+
+            controller.set_text(0, 0, "Front: outtake          ");
         }
     }
     
@@ -200,12 +230,6 @@ void routine_driver_control()
     // and pressing L2 spins the intake outward. Pressing both or neither will not
     // make the intake spin.
     intake_spin(controller.get_digital(DIGITAL_R1),
-        controller.get_digital(DIGITAL_R2), 127);
-
-    // Spin the conveyor belt using the controller. Pressing L1 spins the conveyor
-    // belt upward, and pressing L2 spins the conveyor belt downward. Pressing both
-    // or neither will not make the conveyor belt spin.
-    conveyor_spin(controller.get_digital(DIGITAL_R1),
         controller.get_digital(DIGITAL_R2), 127);
     
     // Spin the outtake using the controller. Pressing R1 spins the outtake outward,
@@ -243,12 +267,6 @@ void initialize()
 	intake.set_encoder_units_all(MOTOR_ENCODER_ROTATIONS);
 	intake.tare_position_all();
 
-    // Set the conveyor belt motor's brake mode and encoder units, then reset its
-    // position to 0 rotations.
-    conveyor.set_brake_mode(MOTOR_BRAKE_HOLD);
-	conveyor.set_encoder_units(MOTOR_ENCODER_ROTATIONS);
-	conveyor.tare_position();
-
     // Set the outtake motor's brake mode and encoder units, then reset its
     // position to 0 rotations.
     outtake.set_brake_mode_all(MOTOR_BRAKE_HOLD);
@@ -273,29 +291,34 @@ void initialize()
     inertial.set_heading(gps_heading);
 
     // Set up the routine selection.
+    pros::lcd::set_text(0, "Select a routine.");
     pros::lcd::set_text(1, "Routine: automatic");
-    controller.set_text(0, 0, "Routine: automatic");
+    controller.set_text(0, 0, "Routine: automatic          ");
+
     routine = 3;
 
     // Routine selection with brain buttons
     pros::lcd::register_btn0_cb([]()
     {
         pros::lcd::set_text(1, "Routine: left side autonomous");
-        controller.set_text(0, 0, "Routine: left auton");
+        controller.set_text(0, 0, "Routine: left auton          ");
+
         routine = 1;
     });
     
     pros::lcd::register_btn1_cb([]()
     {
         pros::lcd::set_text(1, "Routine: no autonomous");
-        controller.set_text(0, 0, "Routine: no auton");
+        controller.set_text(0, 0, "Routine: no auton          ");
+
         routine = 0;
     });
 
     pros::lcd::register_btn2_cb([]()
     {
         pros::lcd::set_text(1, "Routine: right side autonomous");
-        controller.set_text(0, 0, "Routine: right auton");
+        controller.set_text(0, 0, "Routine: right auton          ");
+
         routine = 2;
     });
 }
@@ -308,7 +331,8 @@ void autonomous()
 {
     pros::lcd::set_text(0, "Starting autonomous...");
 
-    routine = 99;
+    // Only use this to override any routine selection.
+    // routine = 99;
 
     // Left side autonomous routine (manual selection)
     if (routine == 1) { routine_auton_left(); }
@@ -326,17 +350,30 @@ void autonomous()
     else if (routine == 3)
     {
         // Left side autonomous routine
-        if ((gps_pos_x > 0.0 && gps_pos_y < 0.0) || (gps_pos_x < 0.0 && gps_pos_y > 0.0)) { routine_auton_left(); }
+        if ((gps_pos_x > 0.0 && gps_pos_y < 0.0) || (gps_pos_x < 0.0 && gps_pos_y > 0.0))
+        { 
+            pros::lcd::set_text(1, "Routine: automatic (left)");
+            controller.set_text(0, 0, "Routine: auto (left)          ");
+
+            routine_auton_left();
+        }
 
         // Right side autonomous routine
-        if ((gps_pos_x > 0.0 && gps_pos_y > 0.0) || (gps_pos_x < 0.0 && gps_pos_y < 0.0)) { routine_auton_right(); }
+        else if ((gps_pos_x > 0.0 && gps_pos_y > 0.0) || (gps_pos_x < 0.0 && gps_pos_y < 0.0))
+        {
+            pros::lcd::set_text(1, "Routine: automatic (right)");
+            controller.set_text(0, 0, "Routine: auto (right)          ");
+
+            routine_auton_right();
+        }
     }
 }
 
 void opcontrol()
 {
     pros::lcd::set_text(0, "Starting driver control...");
-    controller.set_text(0, 0, "Front: outtake");
+    pros::lcd::set_text(1, "Routine: driver control");
+    controller.set_text(0, 0, "Front: intake          ");
 
     // Repeat until driver control is over.
 	while (true)
