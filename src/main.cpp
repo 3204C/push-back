@@ -16,6 +16,9 @@
 #define SMOOTHING_INERTIAL_HEADING 0.4
 #define SMOOTHING_OPTICAL_HUE 0.4
 
+// The maximum voltage a motor can take.
+#define MAX_MOTOR_VOLTAGE 127
+
 /// The direction of the robot's front face.
 int direction = 1;
 
@@ -71,134 +74,175 @@ void routine_auton_test()
     pros::delay(500);
     dt_move_straight(48.0, 2000, true);
     pros::delay(500);
-    
-    // Set the routine to driver control after finishing.
-    pros::lcd::set_text(0, "Autonomous finished.");
-
-    routine = 0;
 }
 
 void routine_auton_left()
 {
-    // Lift the outtake downwards.
-    outtake_lift(0, 1);
-
-    // Spin the intake inwards to pick up blocks.
-    intake_spin(1, 0, 127);
-
-    // Move towards the centre blocks.
-    dt_move_straight(45.0, 1500, true);
-
-    // Stop the intake.
-    intake_spin(0, 0, 0);
-
-    // Turn towards the centre goal.
-    dt_turn(-150.0, 500, true);
-
-    // Move towards the centre goal.
-    dt_move_straight(-5.5, 500, true);
-
-    // Spin the intake and outtake outwards for 2 seconds to let go of the blocks.
-    intake_spin(1, 0, 127);
-    outtake_spin(1, 0, 127);
-    pros::delay(2000);
-
-    // Stop the intake.
-    intake_spin(0, 0, 0);
-    outtake_spin(0, 0, 0);
-
-    // Move away from the centre goal.
-    dt_move_straight(42.0, 1500, true);
-
-    // Turn towards the loading zone.
-    dt_turn(-50.0, 1500, true);
-
-    // Move towards the loading zone.
-    dt_move_straight(20.0, 800, true);
-
-    // Spin the intake inwards for 2 seconds to pick up blocks.
-    intake_spin(1, 0, 127);
-    pros::delay(2000);
-
-    // Lift the outtake upwards.
-    outtake_lift(1, 0);
-
-    // Move towards the long goal.
-    dt_move_straight(-40.0, 1500, true);
-
-    // Spin the outtake outwards to release the blocks.
-    outtake_spin(1, 0, 3000);
-
-    // Stop the intake and outtake.
-    intake_spin(0, 0, 0);
-    outtake_spin(0, 0, 0);
-
-    // Set the routine to driver control after finishing.
-    pros::lcd::set_text(0, "Autonomous finished.");
-
-    routine = 0;
-}
-
-void routine_auton_right()
-{
-    // Lift the outtake downwards.
-    outtake_lift(0, 1);
+    // Drop the outtake down.
+    outtake_lift(-1);
     
     // Spin the intake inwards to pick up blocks.
-    intake_spin(1, 0, 127);
-    outtake_spin(0, 1, 127);
+    intake.move(127);
+
+    // Spin the outtake inwards to keep the preload inside.
+    outtake.move(-127);
 
     // Move towards the centre blocks.
-    dt_move_straight(46.0, 2000, true);
+    dt_move_straight(46.0, 2500, true);
 
-    // Stop the intake.
-    intake_spin(0, 0, 0);
-    outtake_spin(0, 0, 0);
+    // Stop the intake and outtake after 0.5 seconds.
+    pros::delay(500);
+    intake.brake();
+    outtake.brake();
 
-    // Turn towards the centre goal.
-    dt_turn(-45.0, 500, true);
+    // Turn and move towards the centre goal.
+    dt_turn(-135, 500, true);
+    dt_move_straight(-4.5, 500, true);
 
-    // Move towards the centre goal.
-    dt_move_straight(4.5, 500, true);
-
-    // Spin the intake outwards for 2 seconds to let go of the blocks.
-    intake_spin(0, 1, 127);
-    outtake_spin(0, 1, 127);
+    // Spin the intake outwards for 2.5 seconds to let go of the blocks.
+    intake.move(-MAX_MOTOR_VOLTAGE);
+    outtake.move(-MAX_MOTOR_VOLTAGE);
     pros::delay(2500);
-    intake_spin(0, 0, 0);
-    outtake_spin(0, 0, 0);
+    intake.brake();
+    outtake.brake();
 
-    // Move away from the centre goal.
-    dt_move_straight(-52.0, 2000, true);
-
-    // Turn towards the loading zone.
-    dt_turn(-145.0, 1500, true);
-
-    // Move towards the loading zone.
+    // Turn and move towards the loader.
+    dt_move_straight(52.0, 2000, true);
+    dt_turn(-45.0, 1500, true);
     dt_move_straight(12.0, 750, true);
 
     // Spin the intake inwards for 2 seconds to pick up blocks.
-    intake_spin(1, 0, 127);
+    intake.move(MAX_MOTOR_VOLTAGE);
     pros::delay(2000);
-    intake_spin(0, 0, 0);
+    intake.brake();
 
     // Lift the outtake upwards.
-    outtake_lift(1, 0);
+    outtake_lift(1);
 
     // Move towards the long goal.
     dt_move_straight(-36.0, 1500, true);
 
     // Spin the outtake outwards to release the blocks.
-    intake_spin(1, 0, 127);
-    outtake_spin(1, 0, 127);
-
-    // Set the routine to driver control after finishing.
-    pros::lcd::set_text(0, "Autonomous finished.");
-
-    routine = 0;
+    intake.move(MAX_MOTOR_VOLTAGE);
+    outtake.move(MAX_MOTOR_VOLTAGE);
 }
 
-void routine_auton_skills() {}
+void routine_auton_right()
+{
+    // Drop the outtake down.
+    outtake_lift(-1);
+    
+    // Spin the intake inwards to pick up blocks.
+    intake.move(127);
+
+    // Spin the outtake inwards to keep the preload inside.
+    outtake.move(-127);
+
+    // Move towards the centre blocks.
+    dt_move_straight(46.0, 2500, true);
+
+    // Stop the intake and outtake after 0.5 seconds.
+    pros::delay(500);
+    intake.brake();
+    outtake.brake();
+
+    // Turn and move towards the centre goal.
+    dt_turn(-45.0, 500, true);
+    dt_move_straight(4.5, 500, true);
+
+    // Spin the intake outwards for 2.5 seconds to let go of the blocks.
+    intake.move(-MAX_MOTOR_VOLTAGE);
+    outtake.move(-MAX_MOTOR_VOLTAGE);
+    pros::delay(2500);
+    intake.brake();
+    outtake.brake();
+
+    // Turn and move towards the loader.
+    dt_move_straight(-52.0, 2000, true);
+    dt_turn(-145.0, 1500, true);
+    dt_move_straight(12.0, 750, true);
+
+    // Spin the intake inwards for 2 seconds to pick up blocks.
+    intake.move(MAX_MOTOR_VOLTAGE);
+    pros::delay(2000);
+    intake.brake();
+
+    // Lift the outtake upwards.
+    outtake_lift(1);
+
+    // Move towards the long goal.
+    dt_move_straight(-36.0, 1500, true);
+
+    // Spin the outtake outwards to release the blocks.
+    intake.move(MAX_MOTOR_VOLTAGE);
+    outtake.move(MAX_MOTOR_VOLTAGE);
+}
+
+void routine_auton_skills()
+{
+    // Drop the outtake down.
+    outtake_lift(-1);
+    
+    // Spin the intake inwards to pick up blocks.
+    intake.move(127);
+
+    // Spin the outtake inwards to keep the preload inside.
+    outtake.move(-127);
+
+    // Move towards the centre blocks.
+    dt_move_straight(46.0, 2500, true);
+
+    // Stop the intake and outtake after 0.5 seconds.
+    pros::delay(500);
+    intake.brake();
+    outtake.brake();
+
+    // Turn and move towards the centre goal.
+    dt_turn(-45.0, 500, true);
+    dt_move_straight(4.5, 500, true);
+
+    // Spin the intake outwards for 2.5 seconds to let go of the blocks.
+    intake.move(-MAX_MOTOR_VOLTAGE);
+    outtake.move(-MAX_MOTOR_VOLTAGE);
+    pros::delay(2500);
+    intake.brake();
+    outtake.brake();
+
+    // Turn and move towards the loader.
+    dt_move_straight(-52.0, 2000, true);
+    dt_turn(-145.0, 1500, true);
+    dt_move_straight(12.0, 750, true);
+
+    // Repeat 6 times to empty the loader.
+    for (int i; i <= 6; i++)
+    {
+        // Spin the intake inwards for 2 seconds to pick up blocks.
+        intake.move(MAX_MOTOR_VOLTAGE);
+        pros::delay(2000);
+        intake.brake();
+    
+        // Lift the outtake upwards.
+        outtake_lift(1);
+    
+        // Move towards the long goal.
+        dt_move_straight(-36.0, 1500, true);
+
+        // Spin the outtake outwards to release the blocks.
+        intake.move(MAX_MOTOR_VOLTAGE);
+        outtake.move(MAX_MOTOR_VOLTAGE);
+        pros::delay(2000);
+        intake.brake();
+        outtake.brake();
+
+        // Move back to the loader.
+        dt_move_straight(36.0, 1500, true);
+
+        // Drop the outtake down.
+        outtake_lift(0);
+    }
+
+    
+}
 
 void routine_driver_control()
 {  
@@ -229,23 +273,23 @@ void routine_driver_control()
         }
     }
     
-    // Spin the intake using the controller. Pressing L1 spins the intake inward,
-    // and pressing L2 spins the intake outward. Pressing both or neither will not
+    // Spin the intake using the controller. Pressing R1 spins the intake inward,
+    // and pressing R2 spins the intake outward. Pressing both or neither will not
     // make the intake spin.
-    intake_spin(controller.get_digital(DIGITAL_R1),
-        controller.get_digital(DIGITAL_R2), 127);
+    intake.move(MAX_MOTOR_VOLTAGE * (controller.get_digital(DIGITAL_R1)
+        - controller.get_digital(DIGITAL_R2)));
     
-    // Spin the outtake using the controller. Pressing R1 spins the outtake outward,
-    // and pressing R2 spins the outtake inward. Pressing both or neither will not
+    // Spin the outtake using the controller. Pressing L1 spins the outtake outward,
+    // and pressing L2 spins the outtake inward. Pressing both or neither will not
     // make the outtake spin.
-    outtake_spin(controller.get_digital(DIGITAL_L1),
-        controller.get_digital(DIGITAL_L2), 127);
+    outtake.move(MAX_MOTOR_VOLTAGE * (controller.get_digital(DIGITAL_L1)
+        - controller.get_digital(DIGITAL_L2)));
 
     // Lift the outtake using the controller. Pressing the up arrow lifts the outtake
     // upward, and pressing the down arrow lifts the outtake downward. Pressing both
     // or neither will not make the outtake lift.
-    outtake_lift(controller.get_digital(DIGITAL_UP),
-        controller.get_digital(DIGITAL_DOWN));
+    outtake_lift(controller.get_digital(DIGITAL_UP)
+        - controller.get_digital(DIGITAL_DOWN));
 }
 
 void initialize()
@@ -370,6 +414,11 @@ void autonomous()
             routine_auton_right();
         }
     }
+
+    // Set the routine to driver control after finishing.
+    pros::lcd::set_text(0, "Autonomous finished.");
+
+    routine = 0;
 }
 
 void opcontrol()
