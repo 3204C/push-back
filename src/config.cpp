@@ -18,7 +18,7 @@ pros::MotorGroup intake({10, -21, -9});
 
 pros::Motor outtake(-7);
 
-pros::ADIDigitalOut pneumatics('F');
+pros::ADIDigitalOut outtake_pn('F');
 
 pros::Gps gps(12, 0.127, 0.3048, 0.0);
 

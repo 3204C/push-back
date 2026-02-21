@@ -24,7 +24,7 @@ extern pros::MotorGroup intake;
 extern pros::Motor outtake;
 
 /// @brief The pneumatics for the outtake.
-extern pros::ADIDigitalOut pneumatics;
+extern pros::ADIDigitalOut outtake_pn;
 
 /// @brief The GPS Sensor.
 extern pros::Gps gps;

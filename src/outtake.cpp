@@ -38,19 +38,16 @@ void outtake_spin(int is_outward, int is_inward, int voltage, int duration)
     outtake.brake();
 }
 
-void outtake_lift(int is_upward, int is_downward)
+void outtake_lift(int direction)
 {   
-    // Calculate the net direction.
-    int direction = is_upward - is_downward;
-
     // The outtake lifts upward if the direction is positive and downward
     // if the direction is negative.
     if (direction > 0)
     {
-        pneumatics.set_value(0);
+        outtake_pn.set_value(0);
     }
     else if (direction < 0)
     {
-        pneumatics.set_value(4095);
+        outtake_pn.set_value(4095);
     }
 }
