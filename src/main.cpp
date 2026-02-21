@@ -141,53 +141,56 @@ void routine_auton_left()
 
 void routine_auton_right()
 {
+    // Lift the outtake downwards.
+    outtake_lift(0, 1);
+    
     // Spin the intake inwards to pick up blocks.
     intake_spin(1, 0, 127);
+    outtake_spin(0, 1, 127);
 
     // Move towards the centre blocks.
-    dt_move_straight(45.0, 1500, true);
+    dt_move_straight(46.0, 2000, true);
 
     // Stop the intake.
     intake_spin(0, 0, 0);
+    outtake_spin(0, 0, 0);
 
     // Turn towards the centre goal.
-    dt_turn(-50.0, 500, true);
+    dt_turn(-45.0, 500, true);
 
     // Move towards the centre goal.
-    dt_move_straight(5.5, 500, true);
+    dt_move_straight(4.5, 500, true);
 
     // Spin the intake outwards for 2 seconds to let go of the blocks.
     intake_spin(0, 1, 127);
-    pros::delay(2000);
-
-    // Stop the intake.
+    outtake_spin(0, 1, 127);
+    pros::delay(2500);
     intake_spin(0, 0, 0);
+    outtake_spin(0, 0, 0);
 
     // Move away from the centre goal.
-    dt_move_straight(-42.0, 1500, true);
+    dt_move_straight(-52.0, 2000, true);
 
     // Turn towards the loading zone.
-    dt_turn(-150.0, 1500, true);
+    dt_turn(-145.0, 1500, true);
 
     // Move towards the loading zone.
-    dt_move_straight(20.0, 800, true);
+    dt_move_straight(12.0, 750, true);
 
     // Spin the intake inwards for 2 seconds to pick up blocks.
     intake_spin(1, 0, 127);
     pros::delay(2000);
+    intake_spin(0, 0, 0);
 
     // Lift the outtake upwards.
     outtake_lift(1, 0);
 
     // Move towards the long goal.
-    dt_move_straight(-40.0, 1500, true);
+    dt_move_straight(-36.0, 1500, true);
 
     // Spin the outtake outwards to release the blocks.
-    outtake_spin(1, 0, 3000);
-
-    // Stop the intake and outtake.
-    intake_spin(0, 0, 0);
-    outtake_spin(0, 0, 0);
+    intake_spin(1, 0, 127);
+    outtake_spin(1, 0, 127);
 
     // Set the routine to driver control after finishing.
     pros::lcd::set_text(0, "Autonomous finished.");
